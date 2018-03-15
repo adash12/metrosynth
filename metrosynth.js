@@ -10,9 +10,10 @@ var paper = new joint.dia.Paper({
 	height: 650, 
 	gridSize: 1, 
 	model: graph,
-    defaultLink: new joint.dia.Link({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
-    }),
+    defaultRouter: { name: 'metro' },
+    // defaultLink: new joint.dia.Link({
+    //     attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+    // }),
 	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 		// // Prevent linking from input ports.
 		// if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
@@ -59,7 +60,7 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        '.label': { text: 'Oscillator', 'ref-x': .5, 'ref-y': .2 },
+        '.label': { text: 'Osc', 'ref-x': .5, 'ref-y': .2 },
         rect: { fill: '#2ECC71' }
     }
 });
@@ -126,7 +127,7 @@ graph.on('change:source change:target', function(link) {
     ].join('');
     
     // if (sourceId && targetId) {
-    if (idDict[sourceId] === 'Oscillator' && idDict[targetId] === 'Output') {
+    if (idDict[sourceId] === 'Osc' && idDict[targetId] === 'Output') {
     	synth.triggerAttackRelease('C4', '8n');
     };
 
