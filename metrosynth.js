@@ -13,14 +13,18 @@ var paper = new joint.dia.Paper({
     defaultLink: new joint.dia.Link({
         attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
     }),
-	// validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-	// 	// Prevent linking from input ports.
-	// 	if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
-	// 	// Prevent linking from output ports to input ports within one element.
-	// 	if (cellViewS === cellViewT) return false;
-	// 	// Prevent linking to input ports.
-	// 	return magnetT && magnetT.getAttribute('port-group') === 'in';
-	// },
+	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+		// // Prevent linking from input ports.
+		// if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
+		// // Prevent linking from output ports to input ports within one element.
+		// if (cellViewS === cellViewT) return false;
+		// // Prevent linking to input ports.
+		// return magnetT && magnetT.getAttribute('port-group') === 'in';
+
+        // Prevent links that don't connect to anything
+        return cellViewS && cellViewT;
+
+	},
 	// validateMagnet: function(cellView, magnet) {
 	// 	// Note that this is the default behaviour. Just showing it here for reference.
 	// 	// Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
@@ -121,7 +125,8 @@ graph.on('change:source change:target', function(link) {
         ' of element with ID ' + idDict[targetId],
     ].join('');
     
-    if (sourceId && targetId) {
+    // if (sourceId && targetId) {
+    if (idDict[sourceId] === 'Oscillator' && idDict[targetId] === 'Output') {
     	synth.triggerAttackRelease('C4', '8n');
     };
 
