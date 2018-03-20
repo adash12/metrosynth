@@ -1,9 +1,7 @@
+// joint.js things
 var canvas = $('#canvas');
 var cells = [];
 var graph = new joint.dia.Graph();
-
-var synth = new Tone.Synth().toMaster()
-
 var paper = new joint.dia.Paper({ 
 	el: $('#canvas'), 
 	width: canvas.outerWidth(), 
@@ -22,7 +20,8 @@ var paper = new joint.dia.Paper({
 		// // Prevent linking to input ports.
 		// return magnetT && magnetT.getAttribute('port-group') === 'in';
 
-        // Prevent links that don't connect to anything
+        // Prevent links that don't connect to anything 
+        // (?) doesn't seem to work
         return cellViewS && cellViewT;
 
 	},
@@ -35,6 +34,13 @@ var paper = new joint.dia.Paper({
     // Enable link snapping within 20px lookup radius
     // snapLinks: { radius: 20 }
 });
+
+// tone.js things
+
+// var synth = new Tone.Synth();
+var effect = new Tone.FeedbackDelay("4n", 1);
+effect.wet = 0.5;
+
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
@@ -64,6 +70,7 @@ cells[0] = new joint.shapes.devs.Model({
         rect: { fill: '#2ECC71' }
     }
 });
+// setup cells
 cells[0].translate(140, 100);
 cells[1] = cells[0].clone();
 cells[1].translate(300, 60);
@@ -74,11 +81,20 @@ cells[2].translate(300, 60);
 cells[2].attr('.label/text', 'Output');
 graph.addCells(cells);
 var idDict = {};
+// create dictionary
+// this way uses labels of elements
 for (var i = 0; i < cells.length; i++) {
     // var m = ['Cell ' + i + 'has id ' + cells[i].id ].join('');
     // out(m);
     idDict[cells[i].id] = cells[i].attr('.label/text');
 };
+// but we could just have the dictionary be toneJS objects
+idDict[cells[0].id] = new Tone.Synth();
+idDict[cells[1].id] = new Tone.FeedbackDelay("4n", 0.5);
+idDict[cells[2].id] = Tone.Master; 
+// array for each "line"/osc of element IDs
+var oscArr = [cells[0].id];
+
 
 // var svgZoom = svgPanZoom('#canvas svg', {
 //   center: false,
@@ -126,13 +142,41 @@ graph.on('change:source change:target', function(link) {
         ' of element with ID ' + idDict[targetId],
     ].join('');
     
-    // if (sourceId && targetId) {
-    if (idDict[sourceId] === 'Osc' && idDict[targetId] === 'Output') {
-    	synth.triggerAttackRelease('C4', '8n');
+    
+    if (sourceId && targetId) {
+    // if (idDict[sourceId] === 'Osc' && idDict[targetId] === 'Output') {
+    // 	synth.triggerAttackRelease('C4', '8n');
+        oscArr.push(targetId);
+        out(oscArr.length);  
+        connectSounds(oscArr, idDict);
     };
 
     out(m);
 });
+
+function connectSounds(oscArr, idDict) {
+    // if(idDict[oscArr[0]] === 'Osc'){
+    //     synth = new Tone.Synth();
+    // }
+    // else{ // this would be an error with oscArr
+    //     return;
+    // }
+    // for (var i = 0; i < oscArr.length; i++) {
+    //     if(idDict[oscArr[i]] === 'Output'){
+    //         out('connect to master');
+    //         synth.connect(Tone.Master);
+    //     }
+    //     if(idDict[oscArr[i]] === 'Effect'){
+    //         out('connect to effect');
+    //         synth = synth.connect(effect);
+    //     }
+    // };
+    for (var i = 0; i < oscArr.length-1; i++) {
+        idDict[oscArr[i]].connect(idDict[oscArr[i+1]]);
+    };
+    idDict[oscArr[0]].triggerAttackRelease('C4', '8n');
+    
+};
 
 function out(m) {
     console.log(m);
