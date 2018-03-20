@@ -38,8 +38,8 @@ var paper = new joint.dia.Paper({
 // tone.js things
 
 // var synth = new Tone.Synth();
-var effect = new Tone.FeedbackDelay("4n", 1);
-effect.wet = 0.5;
+// var effect = new Tone.FeedbackDelay("4n", 1);
+// effect.wet = 0.5;
 
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
@@ -91,6 +91,7 @@ for (var i = 0; i < cells.length; i++) {
 // but we could just have the dictionary be toneJS objects
 idDict[cells[0].id] = new Tone.Synth();
 idDict[cells[1].id] = new Tone.FeedbackDelay("4n", 0.5);
+idDict[cells[1].id].wet = 0.5;
 idDict[cells[2].id] = Tone.Master; 
 // array for each "line"/osc of element IDs
 var oscArr = [cells[0].id];
@@ -123,6 +124,10 @@ var oscArr = [cells[0].id];
 //   });
 // })();
 
+
+// --- event handlers ---------------------------------------------------------
+
+// called when a link changes source or target
 graph.on('change:source change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
@@ -144,17 +149,44 @@ graph.on('change:source change:target', function(link) {
     
     
     if (sourceId && targetId) {
-    // if (idDict[sourceId] === 'Osc' && idDict[targetId] === 'Output') {
-    // 	synth.triggerAttackRelease('C4', '8n');
+        // add to oscArr
+        // should oscArr.push be in connectAudioNode? I don't think so because
+        // oscArr is an array of joint.js ID's
+        // how to know when to insert things into the middle of the array?
         oscArr.push(targetId);
-        out(oscArr.length);  
-        connectSounds(oscArr, idDict);
+        out("node added (" + oscArr.length + "): " + oscArr.toString());  
+        connectAudioNode(oscArr, idDict);
     };
 
     out(m);
 });
 
-function connectSounds(oscArr, idDict) {
+// called when a link is removed
+graph.on('remove', function(cell, collection, opt) {
+   if (cell.isLink()) {
+      // a link was removed  (cell.id contains the ID of the removed link)
+      out("link " + cell.id + " was removed");
+      var sourceId = cell.get('source').id;
+      var targetId = cell.get('target').id;
+      // remove from oscArr
+      var index = oscArr.indexOf(targetId);
+      oscArr.splice(index, 1);
+      out("node removed (" + oscArr.length + "): " + oscArr.toString());  
+      // should call "removeAudioNode" but I'm not sure exactly 
+      // what should go there
+      idDict[sourceId].disconnect();
+      // var targetId = cell.get('target').id;
+   }
+})
+
+// --- tonejs functions -------------------------------------------------------
+// used to remove tone.js audio nodes when link is removed
+function removeAudioNode(oscArr, idDict){
+    // ?? 
+}
+
+// used to add tone.js audio nodes when link is connected
+function connectAudioNode(oscArr, idDict) {
     // if(idDict[oscArr[0]] === 'Osc'){
     //     synth = new Tone.Synth();
     // }
@@ -171,6 +203,9 @@ function connectSounds(oscArr, idDict) {
     //         synth = synth.connect(effect);
     //     }
     // };
+    // go through each element, get the corresponding tone.js element
+    // then connect current tone.js element to the next one
+    // todo: clear elements when links are removed
     for (var i = 0; i < oscArr.length-1; i++) {
         idDict[oscArr[i]].connect(idDict[oscArr[i+1]]);
     };
@@ -178,15 +213,8 @@ function connectSounds(oscArr, idDict) {
     
 };
 
+// --- other functions --------------------------------------------------------
 function out(m) {
     console.log(m);
 }
 
-// paper.on('link:connnect', function( linkView, evt, elementViewConnected, magnet, arrowhead){
-// 	console.log("connect"+arguments)
-    
-// });
-
-// paper.on('link:pointerup', function(linkView, evt, elementViewConnected, magnet, arrowhead){
-//   console.log("pointerup"+arguments)
-// });
