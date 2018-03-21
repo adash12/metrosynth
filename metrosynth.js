@@ -98,6 +98,17 @@ delete i;
 // array for each "line"/osc of element IDs
 var oscArr = [cells[0].id];
 
+// loop for 4 whole notes (?)
+var t = Tone.Time("1n"); //encodes a whole note
+t.mult(4); // multiply that value by 4
+t.toNotation(); //returns "1m"
+var loop = new Tone.Loop(function(time){
+    //triggered every four whole notes. 
+    console.log(time);
+    idDict[oscArr[0]].triggerAttackRelease('C4', '1n');
+}, t).start(0);
+Tone.Transport.start();
+
 
 // --- event handlers ---------------------------------------------------------
 
