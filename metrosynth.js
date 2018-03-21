@@ -8,14 +8,32 @@ var paper = new joint.dia.Paper({
 	height: 650, 
 	gridSize: 1, 
 	model: graph,
+    // add arrowheads on target side of link
+    defaultLink: new joint.dia.Link({
+        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+    }),
     defaultRouter: { name: 'metro' },
 	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
         // Prevent links that don't connect to anything 
         // (?) doesn't seem to work
+        //      always says cellViewS,T is connected to "object Object"
+        // out("[mS, mT] = [" + magnetS + ", " + magnetT + "]");
         return cellViewS && cellViewT;
 
 	},
+    validateMagnet: function(cellView, magnet){
+    // Prevent links from ports that already have a link
+    var port = magnet.getAttribute('port');
+    var links = graph.getConnectedLinks(cellView.model, { outbound: true });
+    var portLinks = _.filter(links, function(o) {
+        return o.get('source').port == port;
+    });
+    if(portLinks.length > 0) return false;
+    // Note that this is the default behaviour. Just showing it here for reference.
+    // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
+    return magnet.getAttribute('magnet') !== 'passive';
+    }
 });
 
 // create cells
@@ -23,7 +41,7 @@ cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
   size: { width: 90, height: 90 },
-  inPorts: ['in1', 'in2'],
+  inPorts: ['in1'],
   outPorts: ['out1'],
   ports: {
         groups: {
@@ -49,22 +67,34 @@ cells[0] = new joint.shapes.devs.Model({
     }
 });
 // place, annotate cells
-cells[0].translate(140, 100);
-cells[1] = cells[0].clone();
-cells[1].translate(300, 60);
-cells[1].attr('.label/text', 'Effect');
+var i = 0;
+// cells[i++].translate(140, 100);
+cells[i++].translate(40, 30);
+// effect 1
+cells[i] = cells[i-1].clone();
+cells[i].translate(200, 100);
+cells[i++].attr('.label/text', 'Effect1');
 graph.addCells(cells);
-cells[2] = cells[1].clone();
-cells[2].translate(300, 60);
-cells[2].attr('.label/text', 'Output');
+// effect 2
+cells[i] = cells[i-1].clone();
+cells[i].translate(200, 100);
+cells[i++].attr('.label/text', 'Effect2');
+graph.addCells(cells);
+// output
+cells[i] = cells[i-1].clone();
+cells[i].translate(200, 100);
+cells[i++].attr('.label/text', 'Output');
 graph.addCells(cells);
 // tone.js setup
 // create dictionary of toneJS objects
 var idDict = {};
-idDict[cells[0].id] = new Tone.Synth();
-idDict[cells[1].id] = new Tone.FeedbackDelay("4n", 0.5);
-idDict[cells[1].id].wet = 0.5;
-idDict[cells[2].id] = Tone.Master; 
+i = 0;
+idDict[cells[i++].id] = new Tone.Synth();
+idDict[cells[i].id] = new Tone.FeedbackDelay("4n", 0.5);
+idDict[cells[i++].id].wet = 0.5;
+idDict[cells[i++].id] = new Tone.Tremolo();
+idDict[cells[i++].id] = Tone.Master; 
+delete i;
 // array for each "line"/osc of element IDs
 var oscArr = [cells[0].id];
 
@@ -93,12 +123,20 @@ graph.on('change:source change:target', function(link) {
     
     
     if (sourceId && targetId) {
+        // how to know when to insert things into the middle of the array?
+
+        // do not allow non-contiguous links to be added
+        // 
+        if (oscArr.indexOf(sourceId) < 0) {
+            link.disconnect(); // works better than link.remove() ??
+            return;
+        };
         // add to oscArr
         // should oscArr.push be in connectAudioNode? I don't think so because
         // oscArr is an array of joint.js ID's
-        // how to know when to insert things into the middle of the array?
         oscArr.push(targetId);
-        out("node added (" + oscArr.length + "): " + oscArr.toString());  
+        out("node added (" + oscArr.length + "): " + 
+            oscArrToString(oscArr, idDict));  
         connectAudioNode(oscArr, idDict);
     };
 
@@ -107,20 +145,24 @@ graph.on('change:source change:target', function(link) {
 
 // called when a link is removed
 graph.on('remove', function(cell, collection, opt) {
-   if (cell.isLink()) {
-      // a link was removed  (cell.id contains the ID of the removed link)
-      out("link " + cell.id + " was removed");
-      var sourceId = cell.get('source').id;
-      var targetId = cell.get('target').id;
-      // remove from oscArr
-      var index = oscArr.indexOf(targetId);
-      oscArr.splice(index, 1);
-      out("node removed (" + oscArr.length + "): " + oscArr.toString());  
-      // should call "removeAudioNode" but I'm not sure exactly 
-      // what should go there
-      idDict[sourceId].disconnect();
-      // var targetId = cell.get('target').id;
-   }
+    if (cell.isLink()) {
+        // a link was removed  (cell.id contains the ID of the removed link)
+        out("link " + cell.id + " was removed");
+        var sourceId = cell.get('source').id;
+        var targetId = cell.get('target').id;
+        if( !sourceId || !targetId){ 
+            // link needs both source and target to remove from oscArr
+            return;
+        }
+        // remove from oscArr
+        var index = oscArr.indexOf(targetId);
+        oscArr.splice(index, 1);
+        out("node removed (" + oscArr.length + "): " + 
+            oscArrToString(oscArr, idDict));  
+        // should call "removeAudioNode" but I'm not sure exactly 
+        // what should go there
+        idDict[sourceId].disconnect();
+    }
 })
 
 // --- tonejs functions -------------------------------------------------------
@@ -137,7 +179,7 @@ function connectAudioNode(oscArr, idDict) {
     for (var i = 0; i < oscArr.length-1; i++) {
         idDict[oscArr[i]].connect(idDict[oscArr[i+1]]);
     };
-    idDict[oscArr[0]].triggerAttackRelease('C4', '8n');
+    idDict[oscArr[0]].triggerAttackRelease('C4', '1n');
     
 };
 
@@ -146,3 +188,11 @@ function out(m) {
     console.log(m);
 }
 
+function oscArrToString(oscArr, idDict){
+    var string;
+    for (var i = 0; i < oscArr.length; i++) {
+        string = string + idDict[oscArr[i]];
+        string = string + " ";
+    };
+    return string;
+}
