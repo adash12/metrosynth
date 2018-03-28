@@ -9,9 +9,13 @@ var paper = new joint.dia.Paper({
 	gridSize: 1, 
 	model: graph,
     // add arrowheads on target side of link
+    // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' } }
+        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
+                '.connection': {stroke: '#e00000', 'stroke-width': 4}
+                }
     }),
+
     defaultRouter: { name: 'metro' },
 	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
@@ -23,16 +27,14 @@ var paper = new joint.dia.Paper({
 
 	},
     validateMagnet: function(cellView, magnet){
-    // Prevent links from ports that already have a link
-    var port = magnet.getAttribute('port');
-    var links = graph.getConnectedLinks(cellView.model, { outbound: true });
-    var portLinks = _.filter(links, function(o) {
-        return o.get('source').port == port;
-    });
-    if(portLinks.length > 0) return false;
-    // Note that this is the default behaviour. Just showing it here for reference.
-    // Disable linking interaction for magnets marked as passive (see below `.inPorts circle`).
-    return magnet.getAttribute('magnet') !== 'passive';
+        // Prevent links from ports that already have a link
+        var port = magnet.getAttribute('port');
+        var links = graph.getConnectedLinks(cellView.model, { outbound: true });
+        var portLinks = _.filter(links, function(o) {
+            return o.get('source').port == port;
+        });
+        if(portLinks.length > 0) return false;
+        return magnet.getAttribute('magnet') !== 'passive';
     }
 });
 
@@ -73,12 +75,12 @@ cells[i++].translate(40, 30);
 // effect 1
 cells[i] = cells[i-1].clone();
 cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Effect1');
+cells[i++].attr('.label/text', 'Tremolo');
 graph.addCells(cells);
 // effect 2
 cells[i] = cells[i-1].clone();
 cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Effect2');
+cells[i++].attr('.label/text', 'Delay');
 graph.addCells(cells);
 // output
 cells[i] = cells[i-1].clone();
@@ -90,15 +92,15 @@ graph.addCells(cells);
 var idDict = {};
 i = 0;
 idDict[cells[i++].id] = new Tone.Synth();
+idDict[cells[i++].id] = new Tone.Tremolo(10, 0.5).start();
 idDict[cells[i].id] = new Tone.FeedbackDelay("4n", 0.5);
 idDict[cells[i++].id].wet = 0.5;
-idDict[cells[i++].id] = new Tone.Tremolo();
 idDict[cells[i++].id] = Tone.Master; 
 delete i;
 // array for each "line"/osc of element IDs
 var oscArr = [cells[0].id];
 
-// loop for 4 whole notes (?)
+// set loop for 4 whole notes (?)
 var t = Tone.Time("1n"); //encodes a whole note
 t.mult(4); // multiply that value by 4
 t.toNotation(); //returns "1m"
@@ -107,12 +109,17 @@ var loop = new Tone.Loop(function(time){
     console.log(time);
     idDict[oscArr[0]].triggerAttackRelease('C4', '1n');
 }, t).start(0);
+// set BPM
+Tone.Transport.bpm.value = 120;
 Tone.Transport.start();
 
 
 // --- event handlers ---------------------------------------------------------
 
 // called when a link changes source or target
+// fixme: dragging does not work... then there is an extra oscArr element
+//      need to make sure that link is changed from one source to another,
+//      then the appropriate oscArr element is removed
 graph.on('change:source change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
