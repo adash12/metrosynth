@@ -117,7 +117,8 @@ Tone.Transport.start();
 // --- event handlers ---------------------------------------------------------
 
 // called when a link changes source or target
-// fixme: dragging does not work... then there is an extra oscArr element
+// fixme: dragging from one node to another does not work... 
+//      then there is an extra oscArr element
 //      need to make sure that link is changed from one source to another,
 //      then the appropriate oscArr element is removed
 graph.on('change:source change:target', function(link) {
@@ -144,14 +145,13 @@ graph.on('change:source change:target', function(link) {
         // how to know when to insert things into the middle of the array?
 
         // do not allow non-contiguous links to be added
-        // 
         if (oscArr.indexOf(sourceId) < 0) {
             link.disconnect(); // works better than link.remove() ??
             return;
         };
         // add to oscArr
         // should oscArr.push be in connectAudioNode? I don't think so because
-        // oscArr is an array of joint.js ID's
+        // oscArr is an array of joint.js ID's, not really related to tone.js
         oscArr.push(targetId);
         out("node added (" + oscArr.length + "): " + 
             oscArrToString(oscArr, idDict));  
