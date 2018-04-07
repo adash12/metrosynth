@@ -1,23 +1,26 @@
+var select = document.getElementById('color');
+var color = select.options[select.selectedIndex].value;
+
 // joint.js setup
 var canvas = $('#canvas');
 var cells = [];
 var graph = new joint.dia.Graph();
 var paper = new joint.dia.Paper({ 
-	el: $('#canvas'), 
-	width: canvas.outerWidth(), 
-	height: 650, 
-	gridSize: 1, 
-	model: graph,
+    el: $('#canvas'), 
+    width: canvas.outerWidth(), 
+    height: 650, 
+    gridSize: 1, 
+    model: graph,
     // add arrowheads on target side of link
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
-                '.connection': {stroke: '#e00000', 'stroke-width': 4}
+        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': 0 }, 
+                '.connection': {'stroke-width': 4}
                 }
     }),
 
     defaultRouter: { name: 'metro' },
-	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+    validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
         // Prevent links that don't connect to anything 
         // (?) doesn't seem to work
@@ -25,7 +28,7 @@ var paper = new joint.dia.Paper({
         // out("[mS, mT] = [" + magnetS + ", " + magnetT + "]");
         return cellViewS && cellViewT;
 
-	},
+    },
     validateMagnet: function(cellView, magnet){
         // Prevent links from ports that already have a link
         var port = magnet.getAttribute('port');
@@ -122,6 +125,9 @@ Tone.Transport.start();
 //      need to make sure that link is changed from one source to another,
 //      then the appropriate oscArr element is removed
 graph.on('change:source change:target', function(link) {
+    link.attr({'.connection': {stroke:color}});
+    link.attr({'.marker-target': {fill:color}});
+
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
     var sourceLabel = link.get('source').label;
@@ -218,3 +224,10 @@ function oscArrToString(oscArr, idDict){
     };
     return string;
 }
+
+$("#color").on("change", function() {
+    color = select.options[select.selectedIndex].value;
+    var text = select.options[select.selectedIndex].text;
+
+    
+});
