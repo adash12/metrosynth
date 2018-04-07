@@ -142,20 +142,24 @@ graph.on('change:source change:target', function(link) {
     
     
     if (sourceId && targetId) {
-        // how to know when to insert things into the middle of the array?
-
         // do not allow non-contiguous links to be added
         if (oscArr.indexOf(sourceId) < 0) {
             link.disconnect(); // works better than link.remove() ??
             return;
         };
         // add to oscArr
-        // should oscArr.push be in connectAudioNode? I don't think so because
-        // oscArr is an array of joint.js ID's, not really related to tone.js
-        oscArr.push(targetId);
-        out("node added (" + oscArr.length + "): " + 
-            oscArrToString(oscArr, idDict));  
-        connectAudioNode(oscArr, idDict);
+        var myElement = cells[0];
+        var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        oscArr.length = 0;
+        oscArr.push(myElement.id);
+        while(outboundLinks.length > 0) {
+            out(outboundLinks);
+            myElement = outboundLinks[0].get('target');
+            oscArr.push(myElement.id);
+            connectAudioNode(oscArr, idDict);
+            outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        };
+        out(oscArr);
     };
 
     out(m);
@@ -173,8 +177,8 @@ graph.on('remove', function(cell, collection, opt) {
             return;
         }
         // remove from oscArr
-        var index = oscArr.indexOf(targetId);
-        oscArr.splice(index, 1);
+        // var index = oscArr.indexOf(targetId);
+        // oscArr.splice(index, 1);
         out("node removed (" + oscArr.length + "): " + 
             oscArrToString(oscArr, idDict));  
         // should call "removeAudioNode" but I'm not sure exactly 
