@@ -39,6 +39,7 @@ var paper = new joint.dia.Paper({
 });
 
 // create cells
+// first cell corresponds to oscillator 1
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
@@ -64,14 +65,18 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        '.label': { text: 'Osc', 'ref-x': .5, 'ref-y': .2 },
+        '.label': { text: 'Osc1', 'ref-x': .5, 'ref-y': .2 },
         rect: { fill: '#2ECC71' }
     }
 });
 // place, annotate cells
 var i = 0;
-// cells[i++].translate(140, 100);
-cells[i++].translate(40, 30);
+cells[i++].translate(40, 30); // move cell 0 a little bit
+// osc 2
+cells[i] = cells[i-1].clone();
+cells[i].translate(200, 100);
+cells[i++].attr('.label/text', 'Osc2');
+graph.addCells(cells);
 // effect 1
 cells[i] = cells[i-1].clone();
 cells[i].translate(200, 100);
@@ -92,22 +97,39 @@ graph.addCells(cells);
 var idDict = {};
 i = 0;
 idDict[cells[i++].id] = new Tone.Synth();
+
+idDict[cells[i++].id] = new Tone.FMSynth();
+
 idDict[cells[i++].id] = new Tone.Tremolo(10, 0.5).start();
-idDict[cells[i].id] = new Tone.FeedbackDelay("4n", 0.5);
-idDict[cells[i++].id].wet = 0.5;
+
+idDict[cells[i].id] = new Tone.FeedbackDelay("4n", 0.6);
+idDict[cells[i++].id].wet = 0.2;
+
 idDict[cells[i++].id] = Tone.Master; 
 delete i;
 // array for each "line"/osc of element IDs
-var oscArr = [cells[0].id];
+// var redLine = [];
+// var blueLine = [];
+var redLine = [cells[0].id];
+var blueLine = [cells[1].id];
+var oscArr = [cells[0].id, cells[1].id];
 
 // set loop for 4 whole notes (?)
 var t = Tone.Time("1n"); //encodes a whole note
 t.mult(4); // multiply that value by 4
-t.toNotation(); //returns "1m"
+t.toNotation();
 var loop = new Tone.Loop(function(time){
     //triggered every four whole notes. 
     console.log(time);
-    idDict[oscArr[0]].triggerAttackRelease('C4', '1n');
+    // redLine
+    idDict[oscArr[0]].triggerAttackRelease('C3', '1n');
+    idDict[oscArr[0]].triggerAttackRelease('F3', '1n', '+1n+1n');
+    // blueLine
+    idDict[oscArr[1]].triggerAttackRelease('G4', '4n');
+    idDict[oscArr[1]].triggerAttackRelease('E4', '4n', '+4n');
+    idDict[oscArr[1]].triggerAttackRelease('G4', '4n', '+2n');
+    idDict[oscArr[1]].triggerAttackRelease('C4', '4n', '+2n+16n');
+    idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+3n');
 }, t).start(0);
 // set BPM
 Tone.Transport.bpm.value = 120;
@@ -118,9 +140,9 @@ Tone.Transport.start();
 
 // called when a link changes source or target
 // fixme: dragging from one node to another does not work... 
-//      then there is an extra oscArr element
+//      then there is an extra redLine element
 //      need to make sure that link is changed from one source to another,
-//      then the appropriate oscArr element is removed
+//      then the appropriate redLine element is removed
 graph.on('change:source change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
@@ -143,23 +165,41 @@ graph.on('change:source change:target', function(link) {
     
     if (sourceId && targetId) {
         // do not allow non-contiguous links to be added
-        if (oscArr.indexOf(sourceId) < 0) {
+        if (redLine.indexOf(sourceId) < 0 && blueLine.indexOf(sourceId) < 0) {
             link.disconnect(); // works better than link.remove() ??
             return;
         };
-        // add to oscArr
-        var myElement = cells[0];
+        // determine which line is being changed
+        var inboundLinks = [link];
+        var myElement;
+        while(inboundLinks.length > 0){
+            myElement = inboundLinks[0].get('source');
+            inboundLinks = graph.getConnectedLinks(myElement, { inbound: true });
+        }
+        // out(myElement);
+        // out('redLine ' + redLine);
+        // out('blueLine ' + blueLine);
+        // add to line
+        var line;
+        if (redLine.indexOf(myElement.id) >= 0){           
+            line = redLine;
+            out('redLine');
+        }
+        else if (blueLine.indexOf(myElement.id) >= 0){           
+            line = blueLine;
+            out('blueLine');
+        }
+        line.length = 0;
+        line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
-        oscArr.length = 0;
-        oscArr.push(myElement.id);
         while(outboundLinks.length > 0) {
             out(outboundLinks);
             myElement = outboundLinks[0].get('target');
-            oscArr.push(myElement.id);
-            connectAudioNode(oscArr, idDict);
+            line.push(myElement.id);
+            connectAudioNode(line, idDict);
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
-        out(oscArr);
+        out(line);
     };
 
     out(m);
@@ -173,14 +213,14 @@ graph.on('remove', function(cell, collection, opt) {
         var sourceId = cell.get('source').id;
         var targetId = cell.get('target').id;
         if( !sourceId || !targetId){ 
-            // link needs both source and target to remove from oscArr
+            // link needs both source and target to remove from redLine
             return;
         }
-        // remove from oscArr
-        // var index = oscArr.indexOf(targetId);
-        // oscArr.splice(index, 1);
-        out("node removed (" + oscArr.length + "): " + 
-            oscArrToString(oscArr, idDict));  
+        // remove from redLine
+        // var index = redLine.indexOf(targetId);
+        // redLine.splice(index, 1);
+        out("node removed (" + redLine.length + "): " + 
+            lineToString(redLine, idDict));  
         // should call "removeAudioNode" but I'm not sure exactly 
         // what should go there
         idDict[sourceId].disconnect();
@@ -189,19 +229,19 @@ graph.on('remove', function(cell, collection, opt) {
 
 // --- tonejs functions -------------------------------------------------------
 // used to remove tone.js audio nodes when link is removed
-function removeAudioNode(oscArr, idDict){
+function removeAudioNode(line, idDict){
     // ?? 
 }
 
 // used to add tone.js audio nodes when link is connected
-function connectAudioNode(oscArr, idDict) {
+function connectAudioNode(line, idDict) {
     // go through each element, get the corresponding tone.js element
     // then connect current tone.js element to the next one
     // todo: clear elements when links are removed
-    for (var i = 0; i < oscArr.length-1; i++) {
-        idDict[oscArr[i]].connect(idDict[oscArr[i+1]]);
+    for (var i = 0; i < line.length-1; i++) {
+        idDict[line[i]].connect(idDict[line[i+1]]);
     };
-    idDict[oscArr[0]].triggerAttackRelease('C4', '1n');
+    idDict[line[0]].triggerAttackRelease('C4', '1n');
     
 };
 
@@ -210,10 +250,10 @@ function out(m) {
     console.log(m);
 }
 
-function oscArrToString(oscArr, idDict){
+function lineToString(line, idDict){
     var string;
-    for (var i = 0; i < oscArr.length; i++) {
-        string = string + idDict[oscArr[i]];
+    for (var i = 0; i < line.length; i++) {
+        string = string + idDict[line[i]];
         string = string + " ";
     };
     return string;
