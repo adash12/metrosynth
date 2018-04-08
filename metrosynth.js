@@ -11,7 +11,7 @@ var paper = new joint.dia.Paper({
     // add arrowheads on target side of link
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
-        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
+        attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': 0 }, 
                 '.connection': {
                     'stroke-width': 5,
                     'stroke-dasharray': '10,10'
@@ -66,7 +66,7 @@ var idDict = {};
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
-  size: { width: 50, height: 70 },
+  size: { width: 1, height: 1 },
   inPorts: ['in1'],
   // outPorts: ['out1'],
   ports: {
@@ -91,7 +91,7 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        '.label': { text: 'Osc0', 'ref-x': 0, 'ref-y': 1.5 },
+        '.label': { text: 'Osc0'},
         rect: { 'stroke-width':1 }
     }
 });
