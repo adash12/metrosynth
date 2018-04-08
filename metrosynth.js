@@ -12,7 +12,7 @@ var paper = new joint.dia.Paper({
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
         attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
-                '.connection': {'stroke-width': 4}
+                '.connection': {'stroke-width': 5}
                 }
     }),
 
@@ -310,17 +310,20 @@ graph.on('change:source change:target', function(link) {
                 return;
             }
         };
-        link.attr({'.connection': {stroke:color}});
-        link.attr({'.marker-target': {fill:color}});
         // recreate line
         line.length = 0;
         line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         while(outboundLinks.length > 0) {
             out(outboundLinks);
+            // get node, add to line and audio arrays
             myElement = outboundLinks[0].get('target');
             line.push(myElement.id);
             connectAudioNode(line, idDict);
+            // change color
+            outboundLinks[0].attr({'.connection': {stroke:color}});
+            outboundLinks[0].attr({'.marker-target': {fill:color}});
+            // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
         out(line);
