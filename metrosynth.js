@@ -12,8 +12,11 @@ var paper = new joint.dia.Paper({
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
         attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
-                '.connection': {'stroke-width': 5}
+                '.connection': {
+                    'stroke-width': 5,
+                    'stroke-dasharray': '10,10'
                 }
+            }
     }),
 
     defaultRouter: { name: 'metro' },
@@ -23,13 +26,23 @@ var paper = new joint.dia.Paper({
         // (?) doesn't seem to work
         //      always says cellViewS,T is connected to "object Object"
         // out("[mS, mT] = [" + magnetS + ", " + magnetT + "]");
-        return cellViewS && cellViewT;
 
+        // Prevent links to ports that already have an inbound link
+        if(magnetT === undefined) return false; // prevents typeError
+        var port = magnetT.getAttribute('port');
+        var links = graph.getConnectedLinks(cellViewT.model, { inbound: true });
+        var portLinks = _.filter(links, function(o) {
+            return o.get('target').port == port;
+        })
+        if(portLinks.length > 0) return false;//|| indexOf(cellView.model.id,))
+        
+        return cellViewS && cellViewT;
 	},
     validateMagnet: function(cellView, magnet){
-        // Prevent links from ports that already have a link
+        // Prevent links from ports that already have an outbound link
         // Need to have only one link to/from source, sink
         // Need to have two links for effects
+        // check outbound links
         var port = magnet.getAttribute('port');
         var links = graph.getConnectedLinks(cellView.model, { outbound: true });
         var portLinks = _.filter(links, function(o) {
@@ -48,6 +61,7 @@ var colorArr = ['#be1337', '#0795d3', '#f5d415', '#da8707', '#00b050', '#a2a4a1'
 var idDict = {};
 // create cells
 // --- Oscillators ------------------------------------------------------------
+// must be first 6 cells
 // first cell corresponds to oscillator 0 (red)
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
@@ -143,6 +157,7 @@ idDict[cells[i++].id] = new Tone.FeedbackDelay({
 // idDict[cells[i++].id].wet = 0.2;
 graph.addCells(cells);
 // --- Outputs ----------------------------------------------------------------
+// must be last 6 cells
 // out 0
 cells[i] = cells[i-1].clone();
 cells[i].translate(20, 10);
@@ -320,8 +335,9 @@ graph.on('change:source change:target', function(link) {
             myElement = outboundLinks[0].get('target');
             line.push(myElement.id);
             connectAudioNode(line, idDict);
-            // change color
+            // change link appearance
             outboundLinks[0].attr({'.connection': {stroke:color}});
+            outboundLinks[0].attr({'.connection': {'stroke-dasharray': '0,0'}});
             outboundLinks[0].attr({'.marker-target': {fill:color}});
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
