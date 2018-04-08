@@ -15,7 +15,7 @@ var paper = new joint.dia.Paper({
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
         attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': 0 }, 
-                '.connection': {'stroke-width': 4}
+                '.connection': {'stroke-width': 10}
                 }
     }),
 
@@ -45,30 +45,11 @@ var paper = new joint.dia.Paper({
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
-  size: { width: 90, height: 90 },
+  size: { width: 0, height: 0 },
   inPorts: ['in1'],
-  outPorts: ['out1'],
-  ports: {
-        groups: {
-            'in': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#16A085'
-                    }
-                }
-            },
-            'out': {
-                attrs: {
-                    '.port-body': {
-                        fill: '#E74C3C'
-                    }
-                }
-            }
-        }
-    },
     attrs: {
-        '.label': { text: 'Osc', 'ref-x': .5, 'ref-y': .2 },
-        rect: { fill: '#2ECC71' }
+        '.label': { text: 'Osc' },
+        rect: { 'stroke-width':1 }
     }
 });
 // place, annotate cells
@@ -77,17 +58,17 @@ var i = 0;
 cells[i++].translate(40, 30);
 // effect 1
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
+cells[i].translate(60, 60);
 cells[i++].attr('.label/text', 'Tremolo');
 graph.addCells(cells);
 // effect 2
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
+cells[i].translate(60, 60);
 cells[i++].attr('.label/text', 'Delay');
 graph.addCells(cells);
 // output
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
+cells[i].translate(60, 60);
 cells[i++].attr('.label/text', 'Output');
 graph.addCells(cells);
 // tone.js setup
