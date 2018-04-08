@@ -4,7 +4,21 @@
 }
 
 body {
-  font-family: helvitca, sans-serif;
+  font-family: helvetica, sans-serif;
   font-size: 20px;
   font-weight: bold;
+}
+
+.inPorts {
+	stroke-width: 5px;
+	/*transform: translate(10px,10px);*/
+
+}
+
+.inPorts text {
+	display: none;
+}
+
+.label {
+	transform: translate(0px,-40px);
 }
