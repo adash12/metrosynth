@@ -12,7 +12,7 @@ var paper = new joint.dia.Paper({
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
         attrs: { '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }, 
-                '.connection': {stroke: '#e00000', 'stroke-width': 4}
+                '.connection': {'stroke-width': 4}
                 }
     }),
 
@@ -28,6 +28,8 @@ var paper = new joint.dia.Paper({
 	},
     validateMagnet: function(cellView, magnet){
         // Prevent links from ports that already have a link
+        // Need to have only one link to/from source, sink
+        // Need to have two links for effects
         var port = magnet.getAttribute('port');
         var links = graph.getConnectedLinks(cellView.model, { outbound: true });
         var portLinks = _.filter(links, function(o) {
@@ -38,22 +40,32 @@ var paper = new joint.dia.Paper({
     }
 });
 
+// colors: red, blue, yellow, orange, green, silver
+var colorArr = ['#be1337', '#0795d3', '#f5d415', '#da8707', '#00b050', '#a2a4a1'];
+
+// tone.js setup
+// create dictionary of toneJS objects
+var idDict = {};
 // create cells
-// first cell corresponds to oscillator 1
+// --- Oscillators ------------------------------------------------------------
+// first cell corresponds to oscillator 0 (red)
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
   position: {x: 20, y: 20},
-  size: { width: 90, height: 90 },
+  size: { width: 50, height: 70 },
   inPorts: ['in1'],
-  outPorts: ['out1'],
+  // outPorts: ['out1'],
   ports: {
         groups: {
             'in': {
+                position: { // doesn't do anything?
+                    name: 'bottom'
+                },
                 attrs: {
                     '.port-body': {
                         fill: '#16A085'
                     }
-                }
+                }                
             },
             'out': {
                 attrs: {
@@ -65,72 +77,171 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        '.label': { text: 'Osc1', 'ref-x': .5, 'ref-y': .2 },
-        rect: { fill: '#2ECC71' }
+        '.label': { text: 'Osc0', 'ref-x': 0, 'ref-y': 1.5 },
+        rect: { 'stroke-width':1 }
     }
 });
-// place, annotate cells
+// add to dictionary, place, annotate cells
 var i = 0;
-cells[i++].translate(40, 30); // move cell 0 a little bit
-// osc 2
+cells[i].translate(40, 30); // move cell 0 a little bit
+idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
+// osc 1 (blue)
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Osc2');
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Osc1');
+idDict[cells[i++].id] = new Tone.FMSynth();
 graph.addCells(cells);
+// osc 2 (yellow)
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Osc2');
+idDict[cells[i++].id] = new Tone.Synth();
+graph.addCells(cells);
+// osc 3 (orange)
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Osc3');
+idDict[cells[i++].id] = new Tone.Synth();
+graph.addCells(cells);
+// osc 4 (green)
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Osc4');
+idDict[cells[i++].id] = new Tone.Synth();
+graph.addCells(cells);
+// osc 5 (silver)
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Osc5');
+idDict[cells[i++].id] = new Tone.MetalSynth({
+    frequency: 150 ,
+    envelope: {
+        attack: 0.03 ,
+        decay: 0.8 ,
+        release: 0.2,
+    },
+    modulationIndex: 20,
+    resonance: 200
+});
+graph.addCells(cells);
+// --- Effects ----------------------------------------------------------------
 // effect 1
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Tremolo');
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Tremolo');
+idDict[cells[i++].id] = new Tone.Tremolo(10, 0.5).start();
 graph.addCells(cells);
 // effect 2
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Delay');
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Delay');
+idDict[cells[i++].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+// idDict[cells[i++].id].wet = 0.2;
 graph.addCells(cells);
-// output
+// --- Outputs ----------------------------------------------------------------
+// out 0
 cells[i] = cells[i-1].clone();
-cells[i].translate(200, 100);
-cells[i++].attr('.label/text', 'Output');
-graph.addCells(cells);
-// tone.js setup
-// create dictionary of toneJS objects
-var idDict = {};
-i = 0;
-idDict[cells[i++].id] = new Tone.Synth();
-
-idDict[cells[i++].id] = new Tone.FMSynth();
-
-idDict[cells[i++].id] = new Tone.Tremolo(10, 0.5).start();
-
-idDict[cells[i].id] = new Tone.FeedbackDelay("4n", 0.6);
-idDict[cells[i++].id].wet = 0.2;
-
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out0');
 idDict[cells[i++].id] = Tone.Master; 
-delete i;
-// array for each "line"/osc of element IDs
-// var redLine = [];
-// var blueLine = [];
-var redLine = [cells[0].id];
-var blueLine = [cells[1].id];
-var oscArr = [cells[0].id, cells[1].id];
+graph.addCells(cells);
+// out 1
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out1');
+idDict[cells[i++].id] = Tone.Master; 
+graph.addCells(cells);
+// out 2
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out2');
+idDict[cells[i].id] = Tone.Master; 
+graph.addCells(cells);
+// out 3
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out3');
+idDict[cells[i++].id] = Tone.Master; 
+graph.addCells(cells);
+// out 4
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out4');
+idDict[cells[i++].id] = Tone.Master; 
+graph.addCells(cells);
+// out 5
+cells[i] = cells[i-1].clone();
+cells[i].translate(20, 10);
+cells[i].attr('.label/text', 'Out5');
+idDict[cells[i++].id] = Tone.Master; 
+graph.addCells(cells);
 
-// set loop for 4 whole notes (?)
-var t = Tone.Time("1n"); //encodes a whole note
-t.mult(4); // multiply that value by 4
-t.toNotation();
-var loop = new Tone.Loop(function(time){
+delete i;
+
+var linesArr = []; // 2-D array of all models each line
+var oscArr = []; // array of all sources / instruments
+var outArr = []; // array of all sinks / outputs
+// create lines
+for (var i = 0; i < 6; i++) {
+    linesArr[i] = [cells[i].id];
+    oscArr[i] = cells[i].id;
+    outArr[i] = cells[cells.length-i-1].id;
+};
+
+// set loop for 4 measures notes
+var t4m = Tone.Time("4m");
+// t.mult(4); // multiply that value by 4
+// t.toNotation();
+var loop4m = new Tone.Loop(function(time){
     //triggered every four whole notes. 
     console.log(time);
-    // redLine
+    // Red
     idDict[oscArr[0]].triggerAttackRelease('C3', '1n');
+    idDict[oscArr[0]].triggerAttackRelease('E3', '1n', '+1n');
     idDict[oscArr[0]].triggerAttackRelease('F3', '1n', '+1n+1n');
-    // blueLine
+    idDict[oscArr[0]].triggerAttackRelease('G3', '1n', '+1n+1n+1n');
+    // Blue
     idDict[oscArr[1]].triggerAttackRelease('G4', '4n');
     idDict[oscArr[1]].triggerAttackRelease('E4', '4n', '+4n');
     idDict[oscArr[1]].triggerAttackRelease('G4', '4n', '+2n');
     idDict[oscArr[1]].triggerAttackRelease('C4', '4n', '+2n+16n');
     idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+3n');
-}, t).start(0);
+    // Orange
+
+    // Green
+
+    // Silver
+
+}, t4m).start(0);
+var t2n = Tone.Time("2n");
+var loop2n = new Tone.Loop(function(time){
+    //triggered every four whole notes. 
+    // console.log(time);
+    // Yellow
+    idDict[oscArr[2]].triggerAttackRelease('C5','16n');
+    idDict[oscArr[2]].triggerAttackRelease('D5','16n', '+16n');
+    idDict[oscArr[2]].triggerAttackRelease('E5','16n', '+8n');
+    idDict[oscArr[2]].triggerAttackRelease('G5','16n', '+8n+16n');
+    idDict[oscArr[2]].triggerAttackRelease('B5','16n', '+4n');
+    idDict[oscArr[2]].triggerAttackRelease('G5','16n', '+4n+16n');
+    idDict[oscArr[2]].triggerAttackRelease('E5','16n', '+4n+8n');
+    idDict[oscArr[2]].triggerAttackRelease('B4','16n', '+4n+8n+16n');
+    // Orange
+
+    // Green
+
+    // Silver
+    idDict[oscArr[5]].triggerAttackRelease('8n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+8n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n+8n+16n');
+}, t2n).start(0);
+
 // set BPM
 Tone.Transport.bpm.value = 120;
 Tone.Transport.start();
@@ -165,30 +276,43 @@ graph.on('change:source change:target', function(link) {
     
     if (sourceId && targetId) {
         // do not allow non-contiguous links to be added
-        if (redLine.indexOf(sourceId) < 0 && blueLine.indexOf(sourceId) < 0) {
-            link.disconnect(); // works better than link.remove() ??
-            return;
+        for (var i = 0; i < linesArr.length; i++) {
+            if(linesArr[i].indexOf(sourceId) >= 0){
+                break;
+            }
+            else if(i == 6){
+                return;
+            }
         };
+        // if (redLine.indexOf(sourceId) < 0 && blueLine.indexOf(sourceId) < 0) {
+        //     link.disconnect(); // works better than link.remove() ??
+        //     return;
+        // };
+
         // determine which line is being changed
+        // trace links back to first node (oscillator)
         var inboundLinks = [link];
         var myElement;
         while(inboundLinks.length > 0){
             myElement = inboundLinks[0].get('source');
             inboundLinks = graph.getConnectedLinks(myElement, { inbound: true });
         }
-        // out(myElement);
-        // out('redLine ' + redLine);
-        // out('blueLine ' + blueLine);
-        // add to line
+        // determine which line
         var line;
-        if (redLine.indexOf(myElement.id) >= 0){           
-            line = redLine;
-            out('redLine');
-        }
-        else if (blueLine.indexOf(myElement.id) >= 0){           
-            line = blueLine;
-            out('blueLine');
-        }
+        var color;
+        for (var i = 0; i < linesArr.length; i++) {
+            if(linesArr[i].indexOf(myElement.id) >= 0){
+                line = linesArr[i];
+                color = colorArr[i];
+                break;
+            }
+            else if(i == 6){
+                return;
+            }
+        };
+        link.attr({'.connection': {stroke:color}});
+        link.attr({'.marker-target': {fill:color}});
+        // recreate line
         line.length = 0;
         line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
@@ -219,8 +343,8 @@ graph.on('remove', function(cell, collection, opt) {
         // remove from redLine
         // var index = redLine.indexOf(targetId);
         // redLine.splice(index, 1);
-        out("node removed (" + redLine.length + "): " + 
-            lineToString(redLine, idDict));  
+        // out("node removed (" + redLine.length + "): " + 
+        //     lineToString(redLine, idDict));  
         // should call "removeAudioNode" but I'm not sure exactly 
         // what should go there
         idDict[sourceId].disconnect();
@@ -241,7 +365,7 @@ function connectAudioNode(line, idDict) {
     for (var i = 0; i < line.length-1; i++) {
         idDict[line[i]].connect(idDict[line[i+1]]);
     };
-    idDict[line[0]].triggerAttackRelease('C4', '1n');
+    // idDict[line[0]].triggerAttackRelease('C4', '1n');
     
 };
 
