@@ -63,6 +63,12 @@ var createCell = function(cell, x, y, label) {
 }
 
 cells[i++].translate(2*distance, distance);
+cells[i] = createCell(cells[i-1],-2,8,'Silver');
+cells[i] = createCell(cells[i-1],1,1,'Silver');
+cells[i] = createCell(cells[i-1],1,1,'Silver');
+
+/*
+//yellow line
 cells[i] = createCell(cells[i-1],14,1,'Osc');
 cells[i] = createCell(cells[i-1],-1,1,'Delay');
 cells[i] = createCell(cells[i-1],-1,1,'Delay');
@@ -91,6 +97,7 @@ cells[i] = createCell(cells[i-1],2,0,'Delay');
 cells[i] = createCell(cells[i-1],0,1,'Delay');
 cells[i] = createCell(cells[i-1],0,1,'Delay');
 cells[i] = createCell(cells[i-1],0,1,'Delay');
+*/
 /*
 //orange line
 cells[i] = createCell(cells[i-1],14,1,'Osc');
