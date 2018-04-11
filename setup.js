@@ -63,6 +63,25 @@ var createCell = function(cell, x, y, label) {
 }
 
 cells[i++].translate(2*distance, distance);
+cells[i] = createCell(cells[i-1],4,20,'Blue');
+//diagonal
+cells[i] = createCell(cells[i-1],1,-1,'Blue');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+//intersect with yellow
+//up
+cells[i] = createCell(cells[i-1],-1,-5,'Blue');
+//diagonal
+cells[i] = createCell(cells[i-1],-1,-1,'Blue');
+//jump to right
+cells[i] = createCell(cells[i-1],12,-2,'Blue');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+
+/*
+//green line
 cells[i] = createCell(cells[i-1],14,1,'Green');
 //jump to bottom
 cells[i] = createCell(cells[i-1],-3,13,'Green');
@@ -75,6 +94,7 @@ cells[i] = createCell(cells[i-1],1,1,'Green');
 cells[i] = createCell(cells[i-1],1,-1,'Green');
 //diagonal
 cells[i] = createCell(cells[i-1],1,1,'Green');
+*/
 
 /*
 //silver line
