@@ -4,7 +4,7 @@ var graph = new joint.dia.Graph();
 var paper = new joint.dia.Paper({ 
     el: $('#canvas'), 
     width: canvas.outerWidth(), 
-    height: 650, 
+    height: 900, 
     gridSize: 1, 
     model: graph,
     // add arrowheads on target side of link
@@ -62,10 +62,38 @@ var createCell = function(cell, x, y, label) {
     return newCell;
 }
 
-// cells[i++].translate(140, 100);
-
 cells[i++].translate(2*distance, distance);
-cells[i] = createCell(cells[i-1],-2,11,'Osc');
+cells[i] = createCell(cells[i-1],14,1,'Osc');
+cells[i] = createCell(cells[i-1],-1,1,'Delay');
+cells[i] = createCell(cells[i-1],-1,1,'Delay');
+//intersect with red
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
+//diagonal
+cells[i] = createCell(cells[i-1],1,1,'Delay');
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+//intersect with red
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+//left
+cells[i] = createCell(cells[i-1],-2,0,'Delay');
+//diagonal
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+//right
+cells[i] = createCell(cells[i-1],2,0,'Delay');
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+/*
+//orange line
+cells[i] = createCell(cells[i-1],14,1,'Osc');
 cells[i] = createCell(cells[i-1],1,0,'Distortion');
 cells[i] = createCell(cells[i-1],1,0,'Distortion');
 cells[i] = createCell(cells[i-1],1,0,'Distortion');
@@ -94,14 +122,8 @@ cells[i] = createCell(cells[i-1],1,0,'Distortion');
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
-cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');*/
 
-/*cells[i] = createCell(0,60,'Tremolo');
-cells[i] = createCell(0,60,'Delay');
-cells[i] = createCell(0,60,'Output');
-cells[i] = createCell(60,0,'Distortion');
-cells[i] = createCell(60,0,'Distortion');
-cells[i] = createCell(60,0,'Output');*/
 graph.addCells(cells);
 // tone.js setup
 // create dictionary of toneJS objects
