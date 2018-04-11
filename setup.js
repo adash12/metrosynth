@@ -116,16 +116,16 @@ idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
 cells[i] = createCell(cells[i-1], -2, 2, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
 // osc 2 (yellow)
-cells[i] = createCell(cells[0], 14, 1, 'Osc2');
+cells[i] = createCell(cells[0], 13, 1, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 3 (orange)
-cells[i] = createCell(cells[0], -2, 13, 'Osc3');
+cells[i] = createCell(cells[0], -2, 12, 'Osc3');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 4 (green)
-cells[i] = createCell(cells[i-1], 0, 2, 'Osc4');
+cells[i] = createCell(cells[0], 14, 1, 'Osc4');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 5 (silver)
-cells[i] = createCell(cells[i-1], 0, 2, 'Osc5');
+cells[i] = createCell(cells[3], 0, -3, 'Osc5');
 idDict[cells[i-1].id] = new Tone.MetalSynth({
     frequency: 150 ,
     envelope: {
@@ -207,7 +207,7 @@ idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 
 // --- yellow line (2) --------------------------------------------------------
 // go down
-cells[i] = createCell(cells[2],-1,1,'Delay');
+cells[i] = createCell(cells[2], 0,1,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
@@ -375,6 +375,23 @@ idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+// --- green line (4) ---------------------------------------------------------
+//jump to bottom
+cells[i] = createCell(cells[4],-3,13,'Green');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Green');
+//diagonal
+cells[i] = createCell(cells[i-1],1,1,'Green');
+cells[i] = createCell(cells[i-1],1,1,'Green');
+//diagonal
+cells[i] = createCell(cells[i-1],1,-1,'Green');
+//diagonal
+cells[i] = createCell(cells[i-1],1,1,'Green');
+
+// --- silver line (5) --------------------------------------------------------
+// down right
+cells[i] = createCell(cells[5],1,1,'Silver');
+cells[i] = createCell(cells[i-1],1,1,'Silver');
 
 // --- Outputs ----------------------------------------------------------------
 // must be last 6 cells
@@ -383,7 +400,7 @@ cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 // cells[i] = cells[i-1].clone();
 // cells[i].translate(d, 10);
 // cells[i].attr('.label/text', 'Out0');
-cells[i] = createCell(cells[i-1], 0, -1, 'Out0');
+cells[i] = createCell(cells[i-1], 10, 10, 'Out0');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 1
 cells[i] = createCell(cells[i-1], 2, 1, 'Out1');
