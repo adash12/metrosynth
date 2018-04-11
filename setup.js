@@ -63,8 +63,8 @@ var idDict = {};
 var d = 40;
 // create cells
 var i = 0;
-var createCell = function(x, y, label) {
-    var newCell = cells[i-1].clone();
+var createCell = function(cell, x, y, label) {
+    var newCell = cell.clone();
     newCell.translate(x,y);
     newCell.attr('.label/text', label);
     i++;
@@ -76,7 +76,7 @@ var createCell = function(x, y, label) {
 // first cell corresponds to oscillator 0 (red)
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
-  position: {x: d, y: d},
+  position: {x: 4*d, y: d},
   size: { width: 1, height: 1 },
   inPorts: ['in1'],
   // outPorts: ['out1'],
@@ -103,28 +103,29 @@ cells[0] = new joint.shapes.devs.Model({
     },
     attrs: {
         '.label': { text: 'Osc0'},
-        rect: { 'stroke-width':1 }
+        rect: { 'stroke-width':1 },
+        circle: {r:6}
     }
 });
 
 
 // add to dictionary, place, annotate cells
-cells[i].translate(d, d); // move cell 0 a little bit
+// cells[i].translate(d, d); // move cell 0 a little bit
 idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
 // osc 1 (blue)
-cells[i] = createCell(d, d, 'Osc1');
+cells[i] = createCell(cells[i-1], 0, 2*d, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
 // osc 2 (yellow)
-cells[i] = createCell(d, d, 'Osc2');
+cells[i] = createCell(cells[i-1], 0, 2*d, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 3 (orange)
-cells[i] = createCell(d, d, 'Osc3');
+cells[i] = createCell(cells[i-1], 0, 2*d, 'Osc3');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 4 (green)
-cells[i] = createCell(d, d, 'Osc4');
+cells[i] = createCell(cells[i-1], 0, 2*d, 'Osc4');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 5 (silver)
-cells[i] = createCell(d, d, 'Osc5');
+cells[i] = createCell(cells[i-1], 0, 2*d, 'Osc5');
 idDict[cells[i-1].id] = new Tone.MetalSynth({
     frequency: 150 ,
     envelope: {
@@ -135,18 +136,74 @@ idDict[cells[i-1].id] = new Tone.MetalSynth({
     modulationIndex: 20,
     resonance: 200
 });
-// --- Effects ----------------------------------------------------------------
+// - Effects ------------------------------------------------------------------
+// --- red line ---------------------------------------------------------------
+// diagonal part
 // effect 1
-cells[i] = createCell(d, d, 'Tremolo');
+cells[i] = createCell(cells[0], d, d, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // effect 2
-cells[i] = createCell(d, d, 'Delay');
+cells[i] = createCell(cells[i-1], d, d, 'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
-// idDict[cells[i++].id].wet = 0.2;
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// go down
+// effect ...
+cells[i] = createCell(cells[i-1], 0, 5*d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// go across
+// effect ...
+cells[i] = createCell(cells[i-1], 3*d, 0, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], d, 0, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], 5*d, 0, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// go up
+// effect ...
+cells[i] = createCell(cells[i-1], 0, -7*d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// up diagonal
+// effect ...
+cells[i] = createCell(cells[i-1], -d, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], -d, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], -d, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// effect ...
+cells[i] = createCell(cells[i-1], -d, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// up
+cells[i] = createCell(cells[i-1], 0, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+cells[i] = createCell(cells[i-1], 0, -d, 'Tremolo');
+idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+
 // --- Outputs ----------------------------------------------------------------
 // must be last 6 cells
 // out 0
@@ -154,22 +211,22 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
 // cells[i] = cells[i-1].clone();
 // cells[i].translate(d, 10);
 // cells[i].attr('.label/text', 'Out0');
-cells[i] = createCell(d, d, 'Out0');
+cells[i] = createCell(cells[i-1], 0, -d, 'Out0');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 1
-cells[i] = createCell(d, d, 'Out1');
+cells[i] = createCell(cells[i-1], 2*d, d, 'Out1');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 2
-cells[i] = createCell(d, d, 'Out2');
+cells[i] = createCell(cells[i-1], 0, d, 'Out2');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 3
-cells[i] = createCell(d, d, 'Out3');
+cells[i] = createCell(cells[i-1], 0, d, 'Out3');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 4
-cells[i] = createCell(d, d, 'Out4');
+cells[i] = createCell(cells[i-1], 0, d, 'Out4');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 5
-cells[i] = createCell(d, d, 'Out5');
+cells[i] = createCell(cells[i-1], 0, d, 'Out5');
 idDict[cells[i-1].id] = Tone.Master; 
 graph.addCells(cells);
 
