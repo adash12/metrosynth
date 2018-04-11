@@ -5,7 +5,7 @@ var graph = new joint.dia.Graph();
 var paper = new joint.dia.Paper({ 
 	el: $('#canvas'), 
 	width: canvas.outerWidth(), 
-	height: 650, 
+	height: 900, 
 	gridSize: 1, 
 	model: graph,
     // add arrowheads on target side of link
@@ -116,7 +116,7 @@ idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
 cells[i] = createCell(cells[i-1], -2, 2, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
 // osc 2 (yellow)
-cells[i] = createCell(cells[i-1], 0, 2, 'Osc2');
+cells[i] = createCell(cells[0], 14, 1, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 3 (orange)
 cells[i] = createCell(cells[0], -2, 13, 'Osc3');
@@ -203,6 +203,127 @@ cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// --- blue line (1) ----------------------------------------------------------
+
+// --- yellow line (2) --------------------------------------------------------
+// go down
+cells[i] = createCell(cells[2],-1,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],-1,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//intersect with red
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],-1,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//diagonal
+cells[i] = createCell(cells[i-1],1,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//intersect with red
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//left
+cells[i] = createCell(cells[i-1],-2,0,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//diagonal
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//right
+cells[i] = createCell(cells[i-1],2,0,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+//down
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
+cells[i] = createCell(cells[i-1],0,1,'Delay');
+idDict[cells[i-1].id] = new Tone.FeedbackDelay({
+    delayTime: "4n", 
+    feedback: 0.6,
+    wet: 0.5
+});
 // --- orange line (3) --------------------------------------------------------
 // go right
 cells[i] = createCell(cells[3],1,0,'Distortion');
