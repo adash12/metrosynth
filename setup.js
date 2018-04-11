@@ -40,32 +40,68 @@ var paper = new joint.dia.Paper({
 // create cells
 cells[0] = new joint.shapes.devs.Model({
   type: 'devs.Model',
-  position: {x: 20, y: 20},
+  position: {x: 10, y: 10},
   size: { width: 0, height: 0 },
   inPorts: ['in1'],
     attrs: {
         '.label': { text: 'Osc' },
-        rect: { 'stroke-width':1 }
+        circle: {r:6}
+
     }
 });
 
 // place, annotate cells
 var i = 0;
+var distance = 40;
 
-var createCell = function(x, y, label) {
-    var newCell = cells[i-1].clone();
-    newCell.translate(x,y);
+var createCell = function(cell, x, y, label) {
+    var newCell = cell.clone();
+    newCell.translate(x*distance,y*distance);
     newCell.attr('.label/text', label);
     i++;
     return newCell;
 }
 
 // cells[i++].translate(140, 100);
-cells[i++].translate(40, 30);
 
-cells[i] = createCell(60,60,'Tremolo');
-cells[i] = createCell(60,60,'Delay');
-cells[i] = createCell(60,60,'Output');
+cells[i++].translate(2*distance, distance);
+cells[i] = createCell(cells[i-1],-2,11,'Osc');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+//up!
+cells[i] = createCell(cells[i-1],0,-1,'Distortion');
+//diagonal
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],3,0,'Distortion');
+//down
+cells[i] = createCell(cells[i-1],0,2,'Distortion');
+cells[i] = createCell(cells[i-1],0,1,'Distortion');
+//right
+cells[i] = createCell(cells[i-1],2,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+//diagonal
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],1,0,'Distortion');
+//diagonal
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+
+/*cells[i] = createCell(0,60,'Tremolo');
+cells[i] = createCell(0,60,'Delay');
+cells[i] = createCell(0,60,'Output');
+cells[i] = createCell(60,0,'Distortion');
+cells[i] = createCell(60,0,'Distortion');
+cells[i] = createCell(60,0,'Output');*/
 graph.addCells(cells);
 // tone.js setup
 // create dictionary of toneJS objects
