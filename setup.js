@@ -102,7 +102,7 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        '.label': { text: 'Osc0'},
+        '.label': { text: 'Osc0', 'text-anchor':'right'},
         rect: { 'stroke-width':1 },
         circle: {r:6}
     }
@@ -113,7 +113,7 @@ cells[0] = new joint.shapes.devs.Model({
 // cells[i].translate(d, d); // move cell 0 a little bit
 idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
 // osc 1 (blue)
-cells[i] = createCell(cells[i-1], -2, 2, 'Osc1');
+cells[i] = createCell(cells[0], 4, 20, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
 // osc 2 (yellow)
 cells[i] = createCell(cells[0], 13, 1, 'Osc2');
@@ -203,7 +203,23 @@ cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+
 // --- blue line (1) ----------------------------------------------------------
+//diagonal
+cells[i] = createCell(cells[1],1,-1,'Blue');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+//intersect with yellow
+//up
+cells[i] = createCell(cells[i-1],-1,-5,'Blue');
+//diagonal
+cells[i] = createCell(cells[i-1],-1,-1,'Blue');
+//jump to right
+cells[i] = createCell(cells[i-1],13,-1,'Blue');
+//right
+cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1,0,'Blue');
 
 // --- yellow line (2) --------------------------------------------------------
 // go down
