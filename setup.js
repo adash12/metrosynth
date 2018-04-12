@@ -55,6 +55,7 @@ var paper = new joint.dia.Paper({
 
 // colors: red, blue, yellow, orange, green, silver
 var colorArr = ['#be1337', '#0795d3', '#f5d415', '#da8707', '#00b050', '#a2a4a1'];
+var lastStations = [];
 
 // tone.js setup
 // create dictionary of toneJS objects
@@ -203,6 +204,7 @@ cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+lastStations[0] = i;
 
 // --- blue line (1) ----------------------------------------------------------
 //diagonal
@@ -220,6 +222,8 @@ cells[i] = createCell(cells[i-1],13,-1,'Blue');
 //right
 cells[i] = createCell(cells[i-1],1,0,'Blue');
 cells[i] = createCell(cells[i-1],1,0,'Blue');
+lastStations[1] = i;
+lastStations[5] = i;
 
 // --- yellow line (2) --------------------------------------------------------
 // go down
@@ -340,6 +344,8 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     feedback: 0.6,
     wet: 0.5
 });
+lastStations[2] = i;
+
 // --- orange line (3) --------------------------------------------------------
 // go right
 cells[i] = createCell(cells[3],1,0,'Distortion');
@@ -391,6 +397,8 @@ idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+lastStations[3] = i;
+
 // --- green line (4) ---------------------------------------------------------
 //jump to bottom
 cells[i] = createCell(cells[4],-3,13,'Green');
@@ -402,7 +410,8 @@ cells[i] = createCell(cells[i-1],1,1,'Green');
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Green');
 //diagonal
-cells[i] = createCell(cells[i-1],1,1,'Green');
+// cells[i] = createCell(cells[i-1],1,1,'Green');
+lastStations[4] = i;
 
 // --- silver line (5) --------------------------------------------------------
 // down right
@@ -411,27 +420,23 @@ cells[i] = createCell(cells[i-1],1,1,'Silver');
 
 // --- Outputs ----------------------------------------------------------------
 // must be last 6 cells
-// out 0
-
-// cells[i] = cells[i-1].clone();
-// cells[i].translate(d, 10);
-// cells[i].attr('.label/text', 'Out0');
-cells[i] = createCell(cells[i-1], 10, 10, 'Out0');
+// out 0 (red)
+cells[i] = createCell(cells[lastStations[0]-1], 0, -1, 'Out0');
 idDict[cells[i-1].id] = Tone.Master; 
-// out 1
-cells[i] = createCell(cells[i-1], 2, 1, 'Out1');
+// out 1 (blue)
+cells[i] = createCell(cells[lastStations[1]-1], 1, 0, 'Out1');
 idDict[cells[i-1].id] = Tone.Master; 
-// out 2
-cells[i] = createCell(cells[i-1], 0, 1, 'Out2');
+// out 2 (yellow)
+cells[i] = createCell(cells[lastStations[2]-1], 0, 1, 'Out2');
 idDict[cells[i-1].id] = Tone.Master; 
-// out 3
-cells[i] = createCell(cells[i-1], 0, 1, 'Out3');
+// out 3 (orange)
+cells[i] = createCell(cells[lastStations[3]-1], 1, -1, 'Out3');
 idDict[cells[i-1].id] = Tone.Master; 
-// out 4
-cells[i] = createCell(cells[i-1], 0, 1, 'Out4');
+// out 4 (green)
+cells[i] = createCell(cells[lastStations[4]-1], 1, 1, 'Out4');
 idDict[cells[i-1].id] = Tone.Master; 
-// out 5
-cells[i] = createCell(cells[i-1], 0, 1, 'Out5');
+// out 5 (silver)
+cells[i] = createCell(cells[lastStations[5]-1], 1, 1, 'Out5');
 idDict[cells[i-1].id] = Tone.Master; 
 graph.addCells(cells);
 
