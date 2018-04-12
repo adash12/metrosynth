@@ -140,37 +140,22 @@ idDict[cells[i-1].id] = new Tone.MetalSynth({
 // - Effects ------------------------------------------------------------------
 // --- red line (0) -----------------------------------------------------------
 // diagonal part
-// effect 1
-cells[i] = createCell(cells[0], 1, 1, 'Tremolo');
+cells[i] = createCell(cells[0], 2, 2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect 2
-cells[i] = createCell(cells[i-1], 1, 1, 'Delay');
+cells[i] = createCell(cells[i-1], 2, 2, 'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
-// effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
+cells[i] = createCell(cells[i-1], 2, 2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], 1, 1, 'Tremolo');
+cells[i] = createCell(cells[i-1], 2, 2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // go down
 // effect ...
-cells[i] = createCell(cells[i-1], 0, 4, 'Tremolo');
+cells[i] = createCell(cells[i-1], 0, 3, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // go across
 // effect ...
@@ -184,44 +169,43 @@ cells[i] = createCell(cells[i-1], 2, 0, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // go up
 // effect ...
-cells[i] = createCell(cells[i-1], 0, -5, 'Tremolo');
+cells[i] = createCell(cells[i-1], 0, -4, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // up diagonal
 // effect ...
-cells[i] = createCell(cells[i-1], -1, -1, 'Tremolo');
+cells[i] = createCell(cells[i-1], -2, -2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], -1, -1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], -1, -1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-// effect ...
-cells[i] = createCell(cells[i-1], -1, -1, 'Tremolo');
+cells[i] = createCell(cells[i-1], -2, -2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
 // up
-cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
+cells[i] = createCell(cells[i-1], 0, -1.5, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
-cells[i] = createCell(cells[i-1], 0, -1, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+// store last station
 lastStations[0] = i;
 
 // --- blue line (1) ----------------------------------------------------------
 //diagonal
-cells[i] = createCell(cells[1],1,-1,'Blue');
+cells[i] = createCell(cells[1],1,-1,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
 //right
-cells[i] = createCell(cells[i-1],1,0,'Blue');
-cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1.5,0,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
 //intersect with yellow
 //up
-cells[i] = createCell(cells[i-1],-1,-5,'Blue');
+cells[i] = createCell(cells[i-1],-0.5,-5,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
 //diagonal
-cells[i] = createCell(cells[i-1],-1,-1,'Blue');
+cells[i] = createCell(cells[i-1],-1,-1,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
 //jump to right
-cells[i] = createCell(cells[i-1],13,-1,'Blue');
+cells[i] = createCell(cells[i-1],13,-2,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
 //right
-cells[i] = createCell(cells[i-1],1,0,'Blue');
-cells[i] = createCell(cells[i-1],1,0,'Blue');
+cells[i] = createCell(cells[i-1],1,0,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
+cells[i] = createCell(cells[i-1],1,0,'Vibrato');
+idDict[cells[i-1].id] = new Tone.Vibrato();
+// store last station
 lastStations[1] = i;
 lastStations[5] = i;
 
@@ -233,7 +217,7 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     feedback: 0.6,
     wet: 0.5
 });
-cells[i] = createCell(cells[i-1],-1,1,'Delay');
+cells[i] = createCell(cells[i-1],-2,2,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
@@ -246,12 +230,7 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     feedback: 0.6,
     wet: 0.5
 });
-cells[i] = createCell(cells[i-1],-1,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
+
 //diagonal
 cells[i] = createCell(cells[i-1],1,1,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
@@ -260,105 +239,64 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     wet: 0.5
 });
 //down
-cells[i] = createCell(cells[i-1],0,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
-cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,2,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
 //intersect with red
-cells[i] = createCell(cells[i-1],0,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
-cells[i] = createCell(cells[i-1],0,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
-cells[i] = createCell(cells[i-1],0,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
-cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,4,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
 //left
-cells[i] = createCell(cells[i-1],-2,0,'Delay');
+cells[i] = createCell(cells[i-1],-2,1,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
-//diagonal
-cells[i] = createCell(cells[i-1],-2,2,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
-//down
-cells[i] = createCell(cells[i-1],0,1,'Delay');
+//diagonal down
+cells[i] = createCell(cells[i-1],-2,1,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
 //right
-cells[i] = createCell(cells[i-1],2,0,'Delay');
+cells[i] = createCell(cells[i-1],2,1,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
 //down
-cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1.5,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
-cells[i] = createCell(cells[i-1],0,1,'Delay');
+cells[i] = createCell(cells[i-1],0,1.5,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "4n", 
     feedback: 0.6,
     wet: 0.5
 });
-cells[i] = createCell(cells[i-1],0,1,'Delay');
-idDict[cells[i-1].id] = new Tone.FeedbackDelay({
-    delayTime: "4n", 
-    feedback: 0.6,
-    wet: 0.5
-});
+
+// store last station
 lastStations[2] = i;
 
 // --- orange line (3) --------------------------------------------------------
 // go right
-cells[i] = createCell(cells[3],1,0,'Distortion');
+cells[i] = createCell(cells[3],2,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],2,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],2,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 //up!
 cells[i] = createCell(cells[i-1],0,-1,'Distortion');
@@ -374,22 +312,16 @@ idDict[cells[i-1].id] = new Tone.Distortion();
 //down
 cells[i] = createCell(cells[i-1],0,2,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],0,1,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
 //right
 cells[i] = createCell(cells[i-1],3,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],2,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 //right
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion();
-cells[i] = createCell(cells[i-1],1,0,'Distortion');
+cells[i] = createCell(cells[i-1],2,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
@@ -397,31 +329,38 @@ idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion();
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+// store last station
 lastStations[3] = i;
 
 // --- green line (4) ---------------------------------------------------------
 //jump to bottom
-cells[i] = createCell(cells[4],-3,13,'Green');
+cells[i] = createCell(cells[4],-3,13,'Phaser');
+idDict[cells[i-1].id] = new Tone.Phaser();
 //right
-cells[i] = createCell(cells[i-1],1,0,'Green');
+cells[i] = createCell(cells[i-1],1,0,'Phaser');
+idDict[cells[i-1].id] = new Tone.Phaser();
 //diagonal
-cells[i] = createCell(cells[i-1],1,1,'Green');
-cells[i] = createCell(cells[i-1],1,1,'Green');
+cells[i] = createCell(cells[i-1],1,1,'Phaser');
+idDict[cells[i-1].id] = new Tone.Phaser();
+cells[i] = createCell(cells[i-1],1,1,'Phaser');
+idDict[cells[i-1].id] = new Tone.Phaser();
 //diagonal
-cells[i] = createCell(cells[i-1],1,-1,'Green');
-//diagonal
-// cells[i] = createCell(cells[i-1],1,1,'Green');
+cells[i] = createCell(cells[i-1],1,-1,'Phaser');
+idDict[cells[i-1].id] = new Tone.Phaser();
+// store last station
 lastStations[4] = i;
 
 // --- silver line (5) --------------------------------------------------------
 // down right
-cells[i] = createCell(cells[5],1,1,'Silver');
-cells[i] = createCell(cells[i-1],1,1,'Silver');
+cells[i] = createCell(cells[5],1,1,'LPF');
+idDict[cells[i-1].id] = new Tone.Filter(1000, "lowpass");
+cells[i] = createCell(cells[i-1],1,1,'HPF');
+idDict[cells[i-1].id] = new Tone.Filter(300, "highpass");
 
 // --- Outputs ----------------------------------------------------------------
 // must be last 6 cells
 // out 0 (red)
-cells[i] = createCell(cells[lastStations[0]-1], 0, -1, 'Out0');
+cells[i] = createCell(cells[lastStations[0]-1], 0, -1.5, 'Out0');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 1 (blue)
 cells[i] = createCell(cells[lastStations[1]-1], 1, 0, 'Out1');
