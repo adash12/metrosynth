@@ -66,10 +66,6 @@ Tone.Transport.start();
 // --- event handlers ---------------------------------------------------------
 
 // called when a link changes source or target
-// fixme: dragging from one node to another does not work... 
-//      then there is an extra redLine element
-//      need to make sure that link is changed from one source to another,
-//      then the appropriate redLine element is removed
 graph.on('change:source change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
@@ -79,32 +75,18 @@ graph.on('change:source change:target', function(link) {
     var targetId = link.get('target').id;
     var targetLabel = link.get('target').label;
 
-    var m = [
-        'The port ' + sourcePort,
-        // ' of element with label ' + sourceLabel,
-        // ' is connected to port ' + targetPort,
-        // ' of element with label ' + targetLabel,
-        ' of element with ID ' + idDict[sourceId],
-        ' is connected to port ' + targetPort,
-        ' of element with ID ' + idDict[targetId],
-    ].join('');
+    // var m = [
+    //     'The port ' + sourcePort,
+    //     // ' of element with label ' + sourceLabel,
+    //     // ' is connected to port ' + targetPort,
+    //     // ' of element with label ' + targetLabel,
+    //     ' of element with ID ' + idDict[sourceId],
+    //     ' is connected to port ' + targetPort,
+    //     ' of element with ID ' + idDict[targetId],
+    // ].join('');
     
     
     if (sourceId && targetId) {
-        // do not allow non-contiguous links to be added
-        for (var i = 0; i < linesArr.length; i++) {
-            if(linesArr[i].indexOf(sourceId) >= 0){
-                break;
-            }
-            else if(i == 6){
-                return;
-            }
-        };
-        // if (redLine.indexOf(sourceId) < 0 && blueLine.indexOf(sourceId) < 0) {
-        //     link.disconnect(); // works better than link.remove() ??
-        //     return;
-        // };
-
         // determine which line is being changed
         // trace links back to first node (oscillator)
         var inboundLinks = [link];
@@ -113,25 +95,31 @@ graph.on('change:source change:target', function(link) {
             myElement = inboundLinks[0].get('source');
             inboundLinks = graph.getConnectedLinks(myElement, { inbound: true });
         }
+        // out("source = " + myElement.id);
         // determine which line
         var line;
         var color;
-        for (var i = 0; i < linesArr.length; i++) {
-            if(linesArr[i].indexOf(myElement.id) >= 0){
-                line = linesArr[i];
-                color = colorArr[i];
-                break;
-            }
-            else if(i == 6){
-                return;
-            }
-        };
+        var i = oscArr.indexOf(myElement.id);
+        if(i >= 0){
+            line = linesArr[i];
+            color = colorArr[i];
+        }
+        else{
+            // do not allow non-contiguous links to be added
+            return;
+        }
+
         // recreate line
-        line.length = 0;
+        try {
+            line.length = 0; // clear line
+        }
+        catch(e) {
+            return;
+        }
         line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         while(outboundLinks.length > 0) {
-            out(outboundLinks);
+            // out(outboundLinks);
             // get node, add to line and audio arrays
             myElement = outboundLinks[0].get('target');
             line.push(myElement.id);
@@ -143,30 +131,27 @@ graph.on('change:source change:target', function(link) {
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
-        out(line);
+        // out("line = "+ line);
     };
 
-    out(m);
+    // out(m);
 });
 
 // called when a link is removed
 graph.on('remove', function(cell, collection, opt) {
     if (cell.isLink()) {
         // a link was removed  (cell.id contains the ID of the removed link)
-        out("link " + cell.id + " was removed");
+        // out("link " + cell.id + " was removed");
         var sourceId = cell.get('source').id;
         var targetId = cell.get('target').id;
         if( !sourceId || !targetId){ 
-            // link needs both source and target to remove from redLine
+            // link needs both source and target to remove from line
             return;
         }
-        // remove from redLine
-        // var index = redLine.indexOf(targetId);
-        // redLine.splice(index, 1);
-        // out("node removed (" + redLine.length + "): " + 
-        //     lineToString(redLine, idDict));  
-        // should call "removeAudioNode" but I'm not sure exactly 
-        // what should go there
+        // todo:
+        // make all lines after removed line dashed
+
+        // remove from line
         idDict[sourceId].disconnect();
     }
 })
@@ -174,7 +159,7 @@ graph.on('remove', function(cell, collection, opt) {
 // --- tonejs functions -------------------------------------------------------
 // used to remove tone.js audio nodes when link is removed
 function removeAudioNode(line, idDict){
-    // ?? 
+    // will need this if there's support for LFO's, etc 
 }
 
 // used to add tone.js audio nodes when link is connected
@@ -183,7 +168,22 @@ function connectAudioNode(line, idDict) {
     // then connect current tone.js element to the next one
     // todo: clear elements when links are removed
     for (var i = 0; i < line.length-1; i++) {
-        idDict[line[i]].connect(idDict[line[i+1]]);
+        // todo: use instanceof to add LFO, other effects that can't be 
+        // connected together?
+        try{
+            idDict[line[i]].connect(idDict[line[i+1]]);
+        }
+        catch(e){
+            // or instanceof?
+            if(idDict[line[i]].__proto__.__proto__.__proto__ === Tone.LFO.prototype){
+                idDict[line[i]].connect(idDict[line[0]].volume.value);
+                out("I am an LFO");
+            }
+            out("I have problems but I am not an LFO");
+            out(idDict[line[i]].__proto__.__proto__.__proto__);
+            out(Tone.LFO.prototype);
+        }
+
     };
     // idDict[line[0]].triggerAttackRelease('C4', '1n');
     

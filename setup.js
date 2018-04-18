@@ -32,7 +32,15 @@ var paper = new joint.dia.Paper({
         var port = magnetT.getAttribute('port');
         var links = graph.getConnectedLinks(cellViewT.model, { inbound: true });
         var portLinks = _.filter(links, function(o) {
-            return o.get('target').port == port;
+            // todo: 
+            // Uncaught TypeError: Cannot read property 'get' of undefined
+            try{
+                return o.get('target').port == port;
+            }
+            catch(e){
+                return 0;
+            }
+
         })
         if(portLinks.length > 0) return false;//|| indexOf(cellView.model.id,))
         
@@ -148,8 +156,8 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     feedback: 0.6,
     wet: 0.5
 });
-cells[i] = createCell(cells[i-1], 2, 2, 'Tremolo');
-idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
+cells[i] = createCell(cells[i-1], 2, 2, 'LFO');
+idDict[cells[i-1].id] = new Tone.LFO("4n", -10, 0);
 // effect ...
 cells[i] = createCell(cells[i-1], 2, 2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
