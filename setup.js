@@ -32,8 +32,6 @@ var paper = new joint.dia.Paper({
         var port = magnetT.getAttribute('port');
         var links = graph.getConnectedLinks(cellViewT.model, { inbound: true });
         var portLinks = _.filter(links, function(o) {
-            // todo: 
-            // prevent links to osc stations
             try{
                 return o.get('target').port == port;
             }
@@ -180,7 +178,12 @@ idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     wet: 0.5
 });
 cells[i] = createCell(cells[i-1], 2, 2, 'LFO');
-idDict[cells[i-1].id] = new Tone.LFO("4n", -10, 0);
+idDict[cells[i-1].id] = new Tone.Tremolo({
+    frequency : "4n", 
+    type: "sawtooth",
+    depth: 1,
+    spread: 0
+}).start();
 // effect ...
 cells[i] = createCell(cells[i-1], 2, 2, 'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(10, 0.5).start();
