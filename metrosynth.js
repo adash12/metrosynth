@@ -120,6 +120,11 @@ graph.on('change:source change:target', function(link) {
         var myElement;
         while(inboundLinks.length > 0){
             myElement = inboundLinks[0].get('source');
+            if( graph.getCell(myElement.id).attr('.label/text').includes("Out") ){
+                alert("You can't connect from that! :'(");
+                link.remove();
+                return;
+            }
             inboundLinks = graph.getConnectedLinks(myElement, { inbound: true });
         }
         // out("source = " + myElement.id);
@@ -155,11 +160,18 @@ graph.on('change:source change:target', function(link) {
             // get node, add to line and audio arrays
             myElement = outboundLinks[0].get('target');
             line.push(myElement.id);
-            connectAudioNode(line, idDict);
+            if( !connectAudioNode(line, idDict) ){
+                link.remove();
+                return;
+            }
             // change link appearance
             outboundLinks[0].attr({'.connection': {stroke:color}});
             outboundLinks[0].attr({'.connection': {'stroke-dasharray': '0,0'}});
             outboundLinks[0].attr({'.marker-target': {fill:color}});
+            if( graph.getCell(myElement.id).attr('.label/text').includes("Out") ){
+                graph.getCell(myElement.id).attr('circle/stroke', color);
+                graph.getCell(myElement.id).attr('circle/fill', color);
+            }
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
@@ -168,6 +180,8 @@ graph.on('change:source change:target', function(link) {
 
     // out(m);
 });
+
+// todo: also remove things in line when links are dragged away
 
 // called when a link is removed
 graph.on('remove', function(cell, collection, opt) {
@@ -192,6 +206,10 @@ graph.on('remove', function(cell, collection, opt) {
             outboundLinks[0].attr({'.connection': {stroke:'#000000'}});
             outboundLinks[0].attr({'.connection': {'stroke-dasharray': '10,10'}});
             outboundLinks[0].attr({'.marker-target': {fill:'#000000'}});
+            if( graph.getCell(myElement.id).attr('.label/text').includes("Out") ){
+                graph.getCell(myElement.id).attr('circle/stroke', '#000000');
+                graph.getCell(myElement.id).attr('circle/fill', '#000000');
+            }
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
@@ -219,20 +237,13 @@ function connectAudioNode(line, idDict) {
             idDict[line[i]].connect(idDict[line[i+1]]);
         }
         catch(e){
-            // or instanceof?
-            // if(idDict[line[i]].__proto__.__proto__.__proto__ === Tone.LFO.prototype){
-            if(Tone.LFO.isPrototypeOf(idDict[line[i]]) ){
-                idDict[line[i]].connect(idDict[line[0]].volume.value);
-                out("I am an LFO");
-            }
-            out("I have problems but I am not an LFO");
-            out(Object.prototype.toString.call(idDict[line[i]]));
-            out(Object.prototype.toString.call(Tone.LFO));
+            alert("Whoops, you can't connect to that! :'(");
+            return false;
         }
 
     };
     // idDict[line[0]].triggerAttackRelease('C4', '1n');
-    
+    return true;
 };
 
 // --- other functions --------------------------------------------------------
