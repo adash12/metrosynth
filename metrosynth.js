@@ -8,7 +8,7 @@ for (var i = 0; i < 6; i++) {
     outArr[i] = cells[cells.length-i-1].id;
 };
 
-// set loop for 4 measures notes
+// set loop for 4 measures
 var t4m = Tone.Time("4m");
 // t.mult(4); // multiply that value by 4
 // t.toNotation();
@@ -26,13 +26,46 @@ var loop4m = new Tone.Loop(function(time){
     idDict[oscArr[1]].triggerAttackRelease('G4', '4n', '+2n');
     idDict[oscArr[1]].triggerAttackRelease('C4', '4n', '+2n+16n');
     idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+3n');
+    // todo: add some more stuff
+
+
+    // Green
+    // todo: add melody
+
+
+}, t4m).start(0);
+
+// set loop for full measure
+var t1m = Tone.Time("1m")
+var loop1m = new Tone.Loop(function(time){
     // Orange
+    idDict[oscArr[3]].triggerAttack(40);
+    idDict[oscArr[3]].triggerAttack(40, '+8n+16n', 0.7);
+    idDict[oscArr[3]].triggerAttack(40, '+4n');
+    idDict[oscArr[3]].triggerAttack(40, '+2n');
+    idDict[oscArr[3]].triggerAttack(40, '+2n+8n+16n');
+    idDict[oscArr[3]].triggerAttack(40, '+2n+4n+16n');
+    idDict[oscArr[3]].triggerAttack(40, '+2n+4n+8n+16n', 0.7);
 
     // Green
 
     // Silver
+    idDict[oscArr[5]].triggerAttackRelease('16n');
+    idDict[oscArr[5]].triggerAttackRelease('8n', '+16n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+8n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('8n', '+4n');
+    idDict[oscArr[5]].triggerAttackRelease('8n', '+4n+8n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n');
+    idDict[oscArr[5]].triggerAttackRelease('8n', '+2n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n+8n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('32n', '+2n+4n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n+4n+32n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+16n+32n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+16n+32n+64n');
+    idDict[oscArr[5]].triggerAttackRelease('8n', '+2n+4n+8n');
+}, t1m).start(0);
 
-}, t4m).start(0);
+// set loop for half measure
 var t2n = Tone.Time("2n");
 var loop2n = new Tone.Loop(function(time){
     //triggered every four whole notes. 
@@ -46,16 +79,10 @@ var loop2n = new Tone.Loop(function(time){
     idDict[oscArr[2]].triggerAttackRelease('G5','16n', '+4n+16n');
     idDict[oscArr[2]].triggerAttackRelease('E5','16n', '+4n+8n');
     idDict[oscArr[2]].triggerAttackRelease('B4','16n', '+4n+8n+16n');
-    // Orange
 
     // Green
+    idDict[oscArr[4]].triggerAttackRelease('F5', '2n');
 
-    // Silver
-    idDict[oscArr[5]].triggerAttackRelease('8n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+8n+16n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n+16n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+4n+8n+16n');
 }, t2n).start(0);
 
 // set BPM

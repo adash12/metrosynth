@@ -22,7 +22,7 @@ var paper = new joint.dia.Paper({
     defaultRouter: { name: 'metro' },
 	validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
 
-        // Prevent links that don't connect to anything 
+        // todo: Prevent links that don't connect to anything 
         // (?) doesn't seem to work
         //      always says cellViewS,T is connected to "object Object"
         // out("[mS, mT] = [" + magnetS + ", " + magnetT + "]");
@@ -33,7 +33,7 @@ var paper = new joint.dia.Paper({
         var links = graph.getConnectedLinks(cellViewT.model, { inbound: true });
         var portLinks = _.filter(links, function(o) {
             // todo: 
-            // Uncaught TypeError: Cannot read property 'get' of undefined
+            // prevent links to osc stations
             try{
                 return o.get('target').port == port;
             }
@@ -84,12 +84,12 @@ var createCell = function(cell, x, y, label) {
 // must be first 6 cells
 // first cell corresponds to oscillator 0 (red)
 cells[0] = new joint.shapes.devs.Model({
-  type: 'devs.Model',
-  position: {x: 3*distance, y: distance},
-  size: { width: 1, height: 1 },
-  inPorts: ['in1'],
-  // outPorts: ['out1'],
-  ports: {
+    // todo: prevent cells from moving
+    type: 'devs.Model',
+    position: {x: 3*distance, y: distance},
+    size: { width: 1, height: 1 },
+    inPorts: ['in1'],
+    ports: {
         groups: {
             'in': {
                 position: { // doesn't do anything?
@@ -111,6 +111,7 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
+        // todo: make oscillator and output labels italiacized
         '.label': { text: 'Osc0', 'text-anchor':'right'},
         rect: { 'stroke-width':1 },
         circle: {r:6}
@@ -119,33 +120,55 @@ cells[0] = new joint.shapes.devs.Model({
 
 
 // add to dictionary, place, annotate cells
-// cells[i].translate(d, d); // move cell 0 a little bit
-idDict[cells[i++].id] = new Tone.Synth(); // add corresponding audio
-// osc 1 (blue)
+// osc 0 (red) - chord
+idDict[cells[i++].id] = new Tone.Synth({
+    oscillator : {
+        type : "fatsquare",
+        count : 3,
+        spread : 30
+    },
+    envelope : {
+        attack : 0.04
+    }
+}); // add corresponding audio
+// osc 1 (blue) - Melody 
 cells[i] = createCell(cells[0], 4, 20, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
-// osc 2 (yellow)
+// osc 2 (yellow) - Sequence
 cells[i] = createCell(cells[0], 13, 1, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
-// osc 3 (orange)
+// osc 3 (orange) - kick
 cells[i] = createCell(cells[0], -2, 12, 'Osc3');
-idDict[cells[i-1].id] = new Tone.Synth();
-// osc 4 (green)
+idDict[cells[i-1].id] = new Tone.MembraneSynth();
+// osc 4 (green) - Drone
 cells[i] = createCell(cells[0], 14, 1, 'Osc4');
-idDict[cells[i-1].id] = new Tone.Synth();
-// osc 5 (silver)
+idDict[cells[i-1].id] = new Tone.Synth({
+    oscillator : {
+        type : "sine"
+    },
+    envelope : {
+        attack : 0.5,
+        decay : 0.5,
+        sustain : 0.5,
+        release : 1
+    }
+});
+// osc 5 (silver) - hihat
 cells[i] = createCell(cells[3], 0, -3, 'Osc5');
 idDict[cells[i-1].id] = new Tone.MetalSynth({
     frequency: 150 ,
     envelope: {
-        attack: 0.03 ,
-        decay: 0.8 ,
+        attack: 0.001 ,
+        decay: 0.12 ,
         release: 0.2,
     },
     modulationIndex: 20,
-    resonance: 200
+    resonance: 200,
+    volume: -15
 });
 // - Effects ------------------------------------------------------------------
+// todo: shuffle these around, change parameters, add more effects, maybe
+// remove some stations
 // --- red line (0) -----------------------------------------------------------
 // diagonal part
 cells[i] = createCell(cells[0], 2, 2, 'Tremolo');
