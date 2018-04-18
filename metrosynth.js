@@ -131,7 +131,7 @@ graph.on('change:source change:target', function(link) {
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
-        // out("line = "+ line);
+        out("line = "+ line);
     };
 
     // out(m);
@@ -150,6 +150,19 @@ graph.on('remove', function(cell, collection, opt) {
         }
         // todo:
         // make all lines after removed line dashed
+        var myElement = cell.get('target');
+        var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        while(outboundLinks.length > 0) {
+            // out(outboundLinks);
+            // get node, add to line and audio arrays
+            myElement = outboundLinks[0].get('target');
+            // change link appearance
+            outboundLinks[0].attr({'.connection': {stroke:'#000000'}});
+            outboundLinks[0].attr({'.connection': {'stroke-dasharray': '10,10'}});
+            outboundLinks[0].attr({'.marker-target': {fill:'#000000'}});
+            // get next link(s)
+            outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        };
 
         // remove from line
         idDict[sourceId].disconnect();
@@ -175,13 +188,14 @@ function connectAudioNode(line, idDict) {
         }
         catch(e){
             // or instanceof?
-            if(idDict[line[i]].__proto__.__proto__.__proto__ === Tone.LFO.prototype){
+            // if(idDict[line[i]].__proto__.__proto__.__proto__ === Tone.LFO.prototype){
+            if(Tone.LFO.isPrototypeOf(idDict[line[i]]) ){
                 idDict[line[i]].connect(idDict[line[0]].volume.value);
                 out("I am an LFO");
             }
             out("I have problems but I am not an LFO");
-            out(idDict[line[i]].__proto__.__proto__.__proto__);
-            out(Tone.LFO.prototype);
+            out(Object.prototype.toString.call(idDict[line[i]]));
+            out(Object.prototype.toString.call(Tone.LFO));
         }
 
     };
