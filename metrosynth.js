@@ -106,8 +106,13 @@ graph.on('change:source change:target', function(link) {
         }
         else{
             // do not allow non-contiguous links to be added
+            // to musical line
             return;
         }
+        // todo: add "elbow"/node thing at or nera the position of the target
+        // station. This generally makes things look better, forces diagonal 
+        // lines
+
 
         // recreate line
         try {
@@ -148,7 +153,7 @@ graph.on('remove', function(cell, collection, opt) {
             // link needs both source and target to remove from line
             return;
         }
-        // todo:
+
         // make all lines after removed line dashed
         var myElement = cell.get('target');
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
