@@ -6,7 +6,7 @@ var paper = new joint.dia.Paper({
 	el: $('#canvas'), 
 	width: canvas.outerWidth(), 
 	height: 900, 
-	gridSize: 1, 
+	gridSize: 1,
 	model: graph,
     // add arrowheads on target side of link
     // how to have several kinds of links??
@@ -392,22 +392,34 @@ idDict[cells[i-1].id] = new Tone.Filter(300, "highpass");
 // must be last 6 cells
 // out 0 (red)
 cells[i] = createCell(cells[lastStations[0]-1], 0, -1.5, 'Out0');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 1 (blue)
 cells[i] = createCell(cells[lastStations[1]-1], 1, 0, 'Out1');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 2 (yellow)
 cells[i] = createCell(cells[lastStations[2]-1], 0, 1, 'Out2');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 3 (orange)
 cells[i] = createCell(cells[lastStations[3]-1], 1, -1, 'Out3');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 4 (green)
 cells[i] = createCell(cells[lastStations[4]-1], 1, 1, 'Out4');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
 // out 5 (silver)
 cells[i] = createCell(cells[lastStations[5]-1], 1, 1, 'Out5');
+cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = Tone.Master; 
+
+for (color = 0; color < colorArr.length; color++) {
+    cells[color].attr('circle/stroke', colorArr[color]);
+    cells[color].attr('circle/fill', colorArr[color]);
+}
+
 graph.addCells(cells);
 
 delete i;
