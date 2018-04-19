@@ -198,6 +198,10 @@ graph.on('remove', function(cell, collection, opt) {
         // make all lines after removed line dashed
         var myElement = cell.get('target');
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        if( graph.getCell(myElement.id).attr('.label/text').includes("Out") ){
+            graph.getCell(myElement.id).attr('circle/stroke', '#000000');
+            graph.getCell(myElement.id).attr('circle/fill', '#000000');
+        } 
         while(outboundLinks.length > 0) {
             // out(outboundLinks);
             // get node, add to line and audio arrays
