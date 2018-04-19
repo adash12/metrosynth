@@ -141,7 +141,7 @@ graph.on('change:source change:target', function(link) {
             // to musical line
             return;
         }
-        // todo: add "elbow"/node thing at or nera the position of the target
+        // todo: add "elbow"/node thing at or near the position of the target
         // station. This generally makes things look better, forces diagonal 
         // lines
 
@@ -194,7 +194,6 @@ graph.on('remove', function(cell, collection, opt) {
             // link needs both source and target to remove from line
             return;
         }
-
         // make all lines after removed line dashed
         var myElement = cell.get('target');
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
@@ -218,8 +217,10 @@ graph.on('remove', function(cell, collection, opt) {
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
         };
 
-        // remove from line
-        idDict[sourceId].disconnect();
+        // remove from line - if not Tone.Master
+        if( !graph.getCell(cell.get('source')).attr('.label/text').includes("Out") ){
+            idDict[sourceId].disconnect();
+        }
     }
 })
 
