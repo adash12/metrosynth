@@ -98,9 +98,13 @@ Tone.Transport.start();
 
 
 // --- event handlers ---------------------------------------------------------
+// called when a link changes source
+graph.on('change:source', function(link){
+    // todo: change effects when source of link is changed
+});
 
-// called when a link changes source or target
-graph.on('change:source change:target', function(link) {
+// called when a link changes target
+graph.on('change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
     var sourceLabel = link.get('source').label;
