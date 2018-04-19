@@ -1,12 +1,24 @@
 #canvas {
   width: 100%;
   height: 100%;
+  background: url('file:///C:/Users/vince/Downloads/method-draw-image%20(1).svg');
+  background-repeat: no-repeat;
+    background-size: 1200px 1200px;
+    background-position: -230px 0px;
 }
 
 body {
   font-family: helvetica, sans-serif;
   font-size: .8em;
   font-weight: bold;
+}
+
+#right {
+	position: fixed;
+	float: right;
+	top: 0;
+	right:0;
+	width: 200px;
 }
 
 .inPorts {
