@@ -8,6 +8,8 @@ var paper = new joint.dia.Paper({
 	height: 900, 
 	gridSize: 1,
 	model: graph,
+    // Turn off interactivity while stations are being created
+    interactive : false,
     // add arrowheads on target side of link
     // how to have several kinds of links??
     defaultLink: new joint.dia.Link({
@@ -429,5 +431,8 @@ for (color = 0; color < colorArr.length; color++) {
 }
 
 graph.addCells(cells);
+
+// allow interactivity for future added things
+paper.options.interactive = true;
 
 delete i;
