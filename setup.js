@@ -56,7 +56,10 @@ var paper = new joint.dia.Paper({
         });
         if(portLinks.length > 0) return false;
         return magnet.getAttribute('magnet') !== 'passive';
-    }
+    },
+    // Enable link snapping within 75px lookup radius
+    // this destroys everything
+    // snapLinks: { radius: 10 }
 });
 
 // colors: red, blue, yellow, orange, green, silver
@@ -137,7 +140,13 @@ cells[i] = createCell(cells[0], 13, 1, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 3 (orange) - kick
 cells[i] = createCell(cells[0], -2, 12, 'Osc3');
-idDict[cells[i-1].id] = new Tone.MembraneSynth();
+idDict[cells[i-1].id] = new Tone.MembraneSynth({
+    octaves : 4,
+    envelope : {
+        decay : 0.6,
+        sustain : 0.05
+    }
+});
 // osc 4 (green) - Drone
 cells[i] = createCell(cells[0], 14, 1, 'Osc4');
 idDict[cells[i-1].id] = new Tone.Synth({
@@ -337,8 +346,13 @@ idDict[cells[i-1].id] = new Tone.Filter(1000*Math.random()+500, "lowpass");
 cells[i] = createCell(cells[i-1],1,-1,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
 //right
-cells[i] = createCell(cells[i-1],2,0,'Vibrato');
-idDict[cells[i-1].id] = new Tone.Vibrato(20*Math.random(), 0.5*Math.random());
+cells[i] = createCell(cells[i-1],2,0,'LFO');
+idDict[cells[i-1].id] = new Tone.Tremolo({
+    frequency : "6n", 
+    type: "sine",
+    depth: 1,
+    spread: 0
+}).start();
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Reverb');
 idDict[cells[i-1].id] = new Tone.Freeverb(Math.random(), 4000*Math.random()+1000);
@@ -387,27 +401,27 @@ idDict[cells[i-1].id] = new Tone.Filter(500*Math.random()+500, "highpass");
 // out 0 (red)
 cells[i] = createCell(cells[lastStations[0]-1], 0, -1.5, 'Out0');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(0.1).connect(Tone.Master); 
 // out 1 (blue)
 cells[i] = createCell(cells[lastStations[1]-1], 1, 0, 'Out1');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(-0.5).connect(Tone.Master); 
 // out 2 (yellow)
 cells[i] = createCell(cells[lastStations[2]-1], 0, 1, 'Out2');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(0.5).connect(Tone.Master); 
 // out 3 (orange)
 cells[i] = createCell(cells[lastStations[3]-1], 1, -1, 'Out3');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(0).connect(Tone.Master); 
 // out 4 (green)
 cells[i] = createCell(cells[lastStations[4]-1], 1, 1, 'Out4');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(1).connect(Tone.Master); 
 // out 5 (silver)
 cells[i] = createCell(cells[lastStations[5]-1], 1, 1, 'Out5');
 cells[i-1].attr('circle/fill', '#000000');
-idDict[cells[i-1].id] = Tone.Master; 
+idDict[cells[i-1].id] = new Tone.Panner(-1).connect(Tone.Master); 
 
 for (color = 0; color < colorArr.length; color++) {
     cells[color].attr('circle/stroke', colorArr[color]);
