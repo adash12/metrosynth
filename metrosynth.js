@@ -14,23 +14,24 @@ var t4m = Tone.Time("4m");
 // t.toNotation();
 var loop4m = new Tone.Loop(function(time){
     //triggered every four whole notes. 
-    console.log(time);
+    // console.log(time);
     // Red
-    idDict[oscArr[0]].triggerAttackRelease('C3', '1n');
-    idDict[oscArr[0]].triggerAttackRelease('E3', '1n', '+1n');
-    idDict[oscArr[0]].triggerAttackRelease('F3', '1n', '+1n+1n');
-    idDict[oscArr[0]].triggerAttackRelease('G3', '1n', '+1n+1n+1n');
+    idDict[oscArr[0]].triggerAttackRelease('C2', '1n');
+    idDict[oscArr[0]].triggerAttackRelease('E2', '1n', '+1n');
+    idDict[oscArr[0]].triggerAttackRelease('F2', '1n', '+1n+1n');
+    idDict[oscArr[0]].triggerAttackRelease('G2', '1n', '+1n+1n+1n');
     // Blue
     idDict[oscArr[1]].triggerAttackRelease('G4', '4n');
     idDict[oscArr[1]].triggerAttackRelease('E4', '4n', '+4n');
+    idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+3n');
     idDict[oscArr[1]].triggerAttackRelease('G4', '4n', '+2n');
     idDict[oscArr[1]].triggerAttackRelease('C4', '4n', '+2n+16n');
-    idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+3n');
-    // todo: add some more stuff
-
-
-    // Green
-    // todo: add melody
+    idDict[oscArr[1]].triggerAttackRelease('G4', '4n', '+2m');
+    idDict[oscArr[1]].triggerAttackRelease('E4', '4n', '+2m+4n');
+    idDict[oscArr[1]].triggerAttackRelease('B4', '4n', '+2m+3n');
+    idDict[oscArr[1]].triggerAttackRelease('D4', '4n', '+2m+2n');
+    idDict[oscArr[1]].triggerAttackRelease('E4', '4n', '+2m+2n+3n');
+    idDict[oscArr[1]].triggerAttackRelease('A4', '4n', '+3m');
 
 
 }, t4m).start(0);
@@ -51,18 +52,22 @@ var loop1m = new Tone.Loop(function(time){
 
     // Silver
     idDict[oscArr[5]].triggerAttackRelease('16n');
-    idDict[oscArr[5]].triggerAttackRelease('8n', '+16n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+8n+16n');
-    idDict[oscArr[5]].triggerAttackRelease('8n', '+4n');
+    idDict[oscArr[5]].triggerAttackRelease('32n', '+16n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+16n+32n');
+    idDict[oscArr[5]].triggerAttackRelease('32n', '+8n+16n');
+    idDict[oscArr[5]].triggerAttackRelease('32n', '+4n');
     idDict[oscArr[5]].triggerAttackRelease('8n', '+4n+8n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n');
-    idDict[oscArr[5]].triggerAttackRelease('8n', '+2n+16n');
+    // idDict[oscArr[5]].triggerAttackRelease('16n', '+2n');
+    idDict[oscArr[5]].triggerAttackRelease('32n', '+2n+16n');
     idDict[oscArr[5]].triggerAttackRelease('16n', '+2n+8n+16n');
     idDict[oscArr[5]].triggerAttackRelease('32n', '+2n+4n');
-    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n+4n+32n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+32n');
     idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+16n+32n');
-    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+16n+32n+64n');
+    // idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+16n+32n+64n');
     idDict[oscArr[5]].triggerAttackRelease('8n', '+2n+4n+8n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+8n+32n');
+    idDict[oscArr[5]].triggerAttackRelease('64n', '+2n+4n+8n+32n+64n');
+    idDict[oscArr[5]].triggerAttackRelease('16n', '+2n+4n+8n+16n');
 }, t1m).start(0);
 
 // set loop for half measure
@@ -91,9 +96,30 @@ Tone.Transport.start();
 
 
 // --- event handlers ---------------------------------------------------------
+// called when a link changes source
+graph.on('change:source', function(link){
+    // todo: change effects when source of link is changed
+    var sourcePort = link.get('source').port;
+    var sourceId = link.get('source').id;
 
-// called when a link changes source or target
-graph.on('change:source change:target', function(link) {
+    var targetPort = link.get('target').port;
+    var targetId = link.get('target').id;
+ 
+    // remove from line - if not Tone.Master
+    // if( !graph.getCell(link.get('source').id).attr('.label/text').includes("Out") ){
+    //     idDict[sourceId].disconnect();
+    // }
+    if (sourceId && targetId) {
+        out(link.get('source').id)
+    }
+    // connect next stations
+
+    // change colors
+
+});
+
+// called when a link changes target
+graph.on('change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
     var sourceLabel = link.get('source').label;
@@ -155,6 +181,7 @@ graph.on('change:source change:target', function(link) {
         }
         line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        // set all Out stations to black
         while(outboundLinks.length > 0) {
             // out(outboundLinks);
             // get node, add to line and audio arrays
@@ -239,6 +266,8 @@ function connectAudioNode(line, idDict) {
         // todo: use instanceof to add LFO, other effects that can't be 
         // connected together?
         try{
+            // first make sure nothing is connected
+            idDict[line[i]].disconnect(); 
             idDict[line[i]].connect(idDict[line[i+1]]);
         }
         catch(e){
