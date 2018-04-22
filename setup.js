@@ -87,7 +87,6 @@ var createCell = function(cell, x, y, label) {
 // must be first 6 cells
 // first cell corresponds to oscillator 0 (red)
 cells[0] = new joint.shapes.devs.Model({
-    // todo: prevent cells from moving
     type: 'devs.Model',
     position: {x: 3*distance, y: distance},
     size: { width: 1, height: 1 },
@@ -114,7 +113,6 @@ cells[0] = new joint.shapes.devs.Model({
         }
     },
     attrs: {
-        // todo: make oscillator and output labels italiacized
         '.label': { text: 'Osc0', 'text-anchor':'right'},
         rect: { 'stroke-width':1 },
         circle: {r:6}
@@ -135,10 +133,10 @@ idDict[cells[i++].id] = new Tone.Synth({
     }
 }); // add corresponding audio
 // osc 1 (blue) - Melody 
-cells[i] = createCell(cells[0], 4, 20, 'Osc1');
+cells[i] = createCell(cells[0], 3, 21, 'Osc1');
 idDict[cells[i-1].id] = new Tone.FMSynth();
 // osc 2 (yellow) - Sequence
-cells[i] = createCell(cells[0], 13, 1, 'Osc2');
+cells[i] = createCell(cells[0], 13, 1.5, 'Osc2');
 idDict[cells[i-1].id] = new Tone.Synth();
 // osc 3 (orange) - kick
 cells[i] = createCell(cells[0], -2, 12, 'Osc3');
@@ -150,7 +148,7 @@ idDict[cells[i-1].id] = new Tone.MembraneSynth({
     }
 });
 // osc 4 (green) - Drone
-cells[i] = createCell(cells[0], 14, 1, 'Osc4');
+cells[i] = createCell(cells[0], 14, 1.5, 'Osc4');
 idDict[cells[i-1].id] = new Tone.Synth({
     oscillator : {
         type : "sine"
@@ -176,8 +174,6 @@ idDict[cells[i-1].id] = new Tone.MetalSynth({
     volume: -15
 });
 // - Effects ------------------------------------------------------------------
-// todo: shuffle these around, change parameters, add more effects, maybe
-// remove some stations
 // --- red line (0) -----------------------------------------------------------
 // diagonal part
 cells[i] = createCell(cells[0], 2, 2, 'Tremolo');
@@ -240,19 +236,13 @@ idDict[cells[i-1].id] = new Tone.Filter(500*Math.random()+500, "highpass");
 cells[i] = createCell(cells[i-1],1.5,0,'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(20*Math.random(), Math.random()).start();
 //intersect with yellow
-//up
-cells[i] = createCell(cells[i-1],-0.5,-5,'Vibrato');
-idDict[cells[i-1].id] = new Tone.Vibrato(20*Math.random(), 0.5*Math.random());
-//diagonal
-cells[i] = createCell(cells[i-1],-1,-1,'Chorus');
+//up diagonal
+cells[i] = createCell(cells[i-1],-2,-5,'Chorus');
 idDict[cells[i-1].id] = new Tone.Chorus("1n", 1+5*Math.random(), Math.random());
 //jump to right
-cells[i] = createCell(cells[i-1],13,-2,'LPF');
-idDict[cells[i-1].id] = new Tone.Filter(1000*Math.random()+500, "lowpass");
-//right
-cells[i] = createCell(cells[i-1],1,0,'Vibrato');
+cells[i] = createCell(cells[i-1],15,-4,'Vibrato');
 idDict[cells[i-1].id] = new Tone.Vibrato(20*Math.random(), 0.5*Math.random());
-cells[i] = createCell(cells[i-1],1,0,'Phaser');
+cells[i] = createCell(cells[i-1],1.5,0,'Phaser');
 idDict[cells[i-1].id] = new Tone.Phaser(5*Math.random(), Math.floor(5*Math.random()));
 // store last station
 lastStations[1] = i;
@@ -260,9 +250,9 @@ lastStations[5] = i;
 
 // --- yellow line (2) --------------------------------------------------------
 // go down
-cells[i] = createCell(cells[2], 0,1,'HPF');
+cells[i] = createCell(cells[2], 0,1.5,'HPF');
 idDict[cells[i-1].id] = new Tone.Filter(500*Math.random()+500, "highpass");
-cells[i] = createCell(cells[i-1],-2,2,'Phaser');
+cells[i] = createCell(cells[i-1],-2,1,'Phaser');
 idDict[cells[i-1].id] = new Tone.Phaser(5*Math.random(), Math.floor(5*Math.random()));
 //intersect with red
 cells[i] = createCell(cells[i-1],-2,2,'Delay');
@@ -291,23 +281,23 @@ idDict[cells[i-1].id] = new Tone.Tremolo({
     spread: 0
 }).start();
 //left
-cells[i] = createCell(cells[i-1],-2,1,'Reverb');
+cells[i] = createCell(cells[i-1],0,2,'Reverb');
 idDict[cells[i-1].id] = new Tone.JCReverb(Math.random());
 //diagonal down
-cells[i] = createCell(cells[i-1],-2,1,'Phaser');
+cells[i] = createCell(cells[i-1],-4,2,'Phaser');
 idDict[cells[i-1].id] = new Tone.Phaser(5*Math.random(), Math.floor(5*Math.random()));
 //right
-cells[i] = createCell(cells[i-1],2,1,'Vibrato');
+cells[i] = createCell(cells[i-1],1,1,'Vibrato');
 idDict[cells[i-1].id] = new Tone.Vibrato(20*Math.random(), 0.5*Math.random());
 //down
-cells[i] = createCell(cells[i-1],0,1.5,'LFO');
+cells[i] = createCell(cells[i-1],0,1,'LFO');
 idDict[cells[i-1].id] = new Tone.Tremolo({
     frequency : "1n", 
     type: "sine",
     depth: 1,
     spread: 0
 }).start();
-cells[i] = createCell(cells[i-1],0,1.5,'BitCrush');
+cells[i] = createCell(cells[i-1],0,1,'BitCrush');
 idDict[cells[i-1].id] = new Tone.BitCrusher(Math.round(5*Math.random())+1);
 
 // store last station
@@ -337,7 +327,7 @@ idDict[cells[i-1].id] = new Tone.Filter(500*Math.random()+500, "highpass");
 cells[i] = createCell(cells[i-1],3,0,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
 //down
-cells[i] = createCell(cells[i-1],0,2,'Wah');
+cells[i] = createCell(cells[i-1],0,3,'Wah');
 idDict[cells[i-1].id] = new Tone.AutoWah(600, 7, -20);
 //right
 cells[i] = createCell(cells[i-1],3,0,'Distortion');
@@ -345,7 +335,7 @@ idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
 cells[i] = createCell(cells[i-1],2,0,'LPF');
 idDict[cells[i-1].id] = new Tone.Filter(1000*Math.random()+500, "lowpass");
 //diagonal
-cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+cells[i] = createCell(cells[i-1],1,-2,'Distortion');
 idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
 //right
 cells[i] = createCell(cells[i-1],2,0,'LFO');
@@ -356,34 +346,34 @@ idDict[cells[i-1].id] = new Tone.Tremolo({
     spread: 0
 }).start();
 //diagonal
-cells[i] = createCell(cells[i-1],1,-1,'Reverb');
+cells[i] = createCell(cells[i-1],1.5,-1.5,'Reverb');
 idDict[cells[i-1].id] = new Tone.Freeverb(Math.random(), 4000*Math.random()+1000);
-cells[i] = createCell(cells[i-1],1,-1,'Delay');
+cells[i] = createCell(cells[i-1],1.5,-1.5,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "8n+16n", 
     feedback: Math.random(),
     wet: 0.5*Math.random()
 });
-cells[i] = createCell(cells[i-1],1,-1,'Distortion');
-idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
+// cells[i] = createCell(cells[i-1],1,-1,'Distortion');
+// idDict[cells[i-1].id] = new Tone.Distortion(Math.random());
 // store last station
 lastStations[3] = i;
 
 // --- green line (4) ---------------------------------------------------------
 //jump to bottom
-cells[i] = createCell(cells[4],-3,13,'HPF');
+cells[i] = createCell(cells[4],-3,14.5,'HPF');
 idDict[cells[i-1].id] = new Tone.Filter(1000*Math.random()+500, "highpass");
 //right
 cells[i] = createCell(cells[i-1],1,0,'Vibrato');
 idDict[cells[i-1].id] = new Tone.Vibrato(20*Math.random(), 0.5*Math.random());
 //diagonal
-cells[i] = createCell(cells[i-1],1,1,'Delay');
+cells[i] = createCell(cells[i-1],1.5,1.5,'Delay');
 idDict[cells[i-1].id] = new Tone.FeedbackDelay({
     delayTime: "8n+16n", 
     feedback: Math.random(),
     wet: 0.5*Math.random()
 });
-cells[i] = createCell(cells[i-1],1,1,'Tremolo');
+cells[i] = createCell(cells[i-1],1.5,1.5,'Tremolo');
 idDict[cells[i-1].id] = new Tone.Tremolo(20*Math.random(), Math.random()).start();
 //diagonal
 cells[i] = createCell(cells[i-1],1,-1,'Phaser');
@@ -405,7 +395,7 @@ cells[i] = createCell(cells[lastStations[0]-1], 0, -1.5, 'Out0');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(0.1).connect(Tone.Master); 
 // out 1 (blue)
-cells[i] = createCell(cells[lastStations[1]-1], 1, 0, 'Out1');
+cells[i] = createCell(cells[lastStations[1]-1], 1.5, 0, 'Out1');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(-0.5).connect(Tone.Master); 
 // out 2 (yellow)
@@ -413,15 +403,15 @@ cells[i] = createCell(cells[lastStations[2]-1], 0, 1, 'Out2');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(0.5).connect(Tone.Master); 
 // out 3 (orange)
-cells[i] = createCell(cells[lastStations[3]-1], 1, -1, 'Out3');
+cells[i] = createCell(cells[lastStations[3]-1], 1.5, -1.5, 'Out3');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(0).connect(Tone.Master); 
 // out 4 (green)
-cells[i] = createCell(cells[lastStations[4]-1], 1, 1, 'Out4');
+cells[i] = createCell(cells[lastStations[4]-1], 2, 2, 'Out4');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(1).connect(Tone.Master); 
 // out 5 (silver)
-cells[i] = createCell(cells[lastStations[5]-1], 1, 1, 'Out5');
+cells[i] = createCell(cells[lastStations[5]-1], 1.5, 1, 'Out5');
 cells[i-1].attr('circle/fill', '#000000');
 idDict[cells[i-1].id] = new Tone.Panner(-1).connect(Tone.Master); 
 
