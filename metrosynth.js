@@ -97,28 +97,13 @@ Tone.Transport.start();
 
 // --- event handlers ---------------------------------------------------------
 // called when a link changes source
+// is no longer called
 graph.on('change:source', function(link){
-    // todo: change effects when source of link is changed
-    var sourcePort = link.get('source').port;
-    var sourceId = link.get('source').id;
-
-    var targetPort = link.get('target').port;
-    var targetId = link.get('target').id;
- 
-    // remove from line - if not Tone.Master
-    // if( !graph.getCell(link.get('source').id).attr('.label/text').includes("Out") ){
-    //     idDict[sourceId].disconnect();
-    // }
-    if (sourceId && targetId) {
-        out(link.get('source').id)
-    }
-    // connect next stations
-
-    // change colors
 
 });
 
 // called when a link changes target
+// is no longer called
 graph.on('change:target', function(link) {
     var sourcePort = link.get('source').port;
     var sourceId = link.get('source').id;
@@ -181,7 +166,7 @@ graph.on('change:target', function(link) {
         }
         line.push(myElement.id);
         var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
-        // set all Out stations to black
+
         while(outboundLinks.length > 0) {
             // out(outboundLinks);
             // get node, add to line and audio arrays

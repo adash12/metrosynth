@@ -1,7 +1,7 @@
 #canvas {
   width: 100%;
   height: 100%;
-  background: url('file:///C:/Users/vince/Downloads/method-draw-image%20(1).svg');
+  background: url('metrosynth.svg');
   background-repeat: no-repeat;
     background-size: 1200px 1200px;
     background-position: -230px 0px;
@@ -33,4 +33,8 @@ body {
 
 .label {
 	transform: rotate(45deg) translate(-20px,-20px);
+}
+
+.marker-arrowheads { 
+	display: none 
 }
