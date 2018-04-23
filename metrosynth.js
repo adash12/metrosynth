@@ -127,22 +127,38 @@ graph.on('change:target', function(link) {
     if (sourceId && targetId) {
         // determine which line is being changed
         // trace links back to first node (oscillator)
+        if(sourceId == targetId){
+            link.remove();
+            return;
+        }
         var inboundLinks = [link];
         var myElement;
         while(inboundLinks.length > 0){
             myElement = inboundLinks[0].get('source');
             if( graph.getCell(myElement.id).attr('.label/text').includes("Out") ){
-                alert("You can't connect from that! :'(");
+                alert("Whoops, you can't connect FROM that! :'(");
                 link.remove();
                 return;
             }
             inboundLinks = graph.getConnectedLinks(myElement, { inbound: true });
         }
-        // out("source = " + myElement.id);
+        var oscElement = myElement;
+        var outboundLinks = [link]
+        while(outboundLinks.length > 0){
+            myElement = outboundLinks[0].get('target');
+            if( graph.getCell(myElement.id).attr('.label/text').includes("Osc") ){
+                alert("Whoops, you can't connect TO that! :'(");
+                link.remove();
+                return;
+            }
+            outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        }
+
+        // out("source = " + oscElement.id);
         // determine which line
         var line;
         var color;
-        var i = oscArr.indexOf(myElement.id);
+        var i = oscArr.indexOf(oscElement.id);
         if(i >= 0){
             line = linesArr[i];
             color = colorArr[i];
@@ -164,8 +180,8 @@ graph.on('change:target', function(link) {
         catch(e) {
             return;
         }
-        line.push(myElement.id);
-        var outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+        line.push(oscElement.id);
+        outboundLinks = graph.getConnectedLinks(oscElement, { outbound: true });
 
         while(outboundLinks.length > 0) {
             // out(outboundLinks);
@@ -239,27 +255,18 @@ graph.on('remove', function(cell, collection, opt) {
 // --- tonejs functions -------------------------------------------------------
 // used to remove tone.js audio nodes when link is removed
 function removeAudioNode(line, idDict){
-    // will need this if there's support for LFO's, etc 
+    // will need this if there's support for LFO's, etc
+    // todo: clear elements when links are removed 
 }
 
 // used to add tone.js audio nodes when link is connected
 function connectAudioNode(line, idDict) {
     // go through each element, get the corresponding tone.js element
     // then connect current tone.js element to the next one
-    // todo: clear elements when links are removed
     for (var i = 0; i < line.length-1; i++) {
-        // todo: use instanceof to add LFO, other effects that can't be 
-        // connected together?
-        try{
-            // first make sure nothing is connected
-            idDict[line[i]].disconnect(); 
-            idDict[line[i]].connect(idDict[line[i+1]]);
-        }
-        catch(e){
-            alert("Whoops, you can't connect to that! :'(");
-            return false;
-        }
-
+        // first make sure nothing is connected
+        idDict[line[i]].disconnect(); 
+        idDict[line[i]].connect(idDict[line[i+1]]);
     };
     // idDict[line[0]].triggerAttackRelease('C4', '1n');
     return true;

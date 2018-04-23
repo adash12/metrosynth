@@ -393,26 +393,32 @@ idDict[cells[i-1].id] = new Tone.Filter(500*Math.random()+500, "highpass");
 // out 0 (red)
 cells[i] = createCell(cells[lastStations[0]-1], 0, -1.5, 'Out0');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(0.1).connect(Tone.Master); 
 // out 1 (blue)
 cells[i] = createCell(cells[lastStations[1]-1], 1.5, 0, 'Out1');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(-0.5).connect(Tone.Master); 
 // out 2 (yellow)
 cells[i] = createCell(cells[lastStations[2]-1], 0, 1, 'Out2');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(0.5).connect(Tone.Master); 
 // out 3 (orange)
 cells[i] = createCell(cells[lastStations[3]-1], 1.5, -1.5, 'Out3');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(0).connect(Tone.Master); 
 // out 4 (green)
 cells[i] = createCell(cells[lastStations[4]-1], 2, 2, 'Out4');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(1).connect(Tone.Master); 
 // out 5 (silver)
 cells[i] = createCell(cells[lastStations[5]-1], 1.5, 1, 'Out5');
 cells[i-1].attr('circle/fill', '#000000');
+cells[i-1].attr('.port-body/magnet', 'passive');
 idDict[cells[i-1].id] = new Tone.Panner(-1).connect(Tone.Master); 
 
 for (color = 0; color < colorArr.length; color++) {
