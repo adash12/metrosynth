@@ -203,10 +203,11 @@ graph.on('change:target', function(link) {
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
 
-            // Check if oscillator and output are both part of chain
+            // Check if oscillator and output are both part of chain, i.e. complete chain
             if(line.length >= 2 && i >= 0 && idDict[line[line.length-1]] instanceof Tone.Panner){
                 idDict[line[line.length-2]].connect(waveforms[i])
-                console.log(waveforms[i].getValue())
+                // console.log(waveforms[i].getValue())
+                trains[i] = {'process': setInterval(moveTrain, 500), 'position': 0};
             }
         };
         out("line = "+ line);
@@ -261,6 +262,15 @@ graph.on('remove', function(cell, collection, opt) {
         if( !graph.getCell(cell.get('source')).attr('.label/text').includes("Out") ){
             idDict[sourceId].disconnect();
         }
+
+        // If line had a train animation, turn it off
+        var line_num = colorArr.indexOf(cell.attributes.attrs['.connection'].stroke)
+        if(trains[line_num] != null){
+            clearInterval(trains[line_num].process)
+            trains[line_num] = null
+            var train_el = document.getElementById('train-'+line_num);    
+            train_el.style.bottom = 0 + 'px';
+        }
     }
 })
 
@@ -314,7 +324,7 @@ function lineToString(line, idDict){
 var ctx = vis.getContext('2d'),
     w, h;
 
-vis.width = w = window.innerWidth * 0.4;
+vis.width = w = window.innerWidth * 0.3;
 vis.height = h = 50*6;
 
 var waveforms = []
@@ -409,4 +419,15 @@ function osc() {
     }
 
     return this;    
+}
+
+trains = [null, null, null, null, null, null];
+function moveTrain(){
+    for(train_num in trains){
+        if(trains[train_num] != null){
+            var train_el = document.getElementById('train-'+train_num);    
+            train_el.style.bottom = trains[train_num].position + 'px';
+            trains[train_num].position = 10 - trains[train_num].position;
+        }
+    }
 }

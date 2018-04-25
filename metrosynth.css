@@ -28,6 +28,7 @@
 
 .train-sprite{
 	margin-top : 2px;
+	position: relative;
 }
 
 body {
