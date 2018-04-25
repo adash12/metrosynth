@@ -17,6 +17,17 @@
 #vis{
 	margin-top: 50px;
 	float: left;
+	position: absolute;
+}
+
+#train-sprites{
+	position: absolute;
+	right: 20px;
+	top: 50px;
+}
+
+.train-sprite{
+	margin-top : 2px;
 }
 
 body {

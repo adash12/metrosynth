@@ -19,7 +19,18 @@
 			<p>Now that you've got your oscillator connected to a filter, let's take a listen to what we've got. Click on the filter and drag until you get to a black station - any of the ones that say "Out" and then a number. The number doesn't have to be the same as the oscillator you started at - those are just the beginning and endpoints of the real-life Metro lines. Once you've connected your line to an output, you should be able to hear your signal and see its waveform below. Nice job!</p>
 			<p>Keep experimenting with different lines, filters, and oscillators, and make your own personal sound and Metro map.</p>
 		</div>
-		<canvas id="vis"></canvas>
+
+		<div style="position:relative;">
+			<canvas id="vis"></canvas>
+			<div id="train-sprites">
+				<img class="train-sprite" src="./train-medium.png"><br>
+				<img class="train-sprite" src="./train-medium.png"><br>
+				<img class="train-sprite" src="./train-medium.png"><br>
+				<img class="train-sprite" src="./train-medium.png"><br>
+				<img class="train-sprite" src="./train-medium.png"><br>
+				<img class="train-sprite" src="./train-medium.png">
+			</div>
+		</div>
 		
 		<script src="https://ariutta.github.io/svg-pan-zoom/dist/svg-pan-zoom.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
