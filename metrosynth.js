@@ -207,7 +207,10 @@ graph.on('change:target', function(link) {
             if(line.length >= 2 && i >= 0 && idDict[line[line.length-1]] instanceof Tone.Panner){
                 idDict[line[line.length-2]].connect(waveforms[i])
                 // console.log(waveforms[i].getValue())
-                trains[i] = {'process': setInterval(moveTrain, 500), 'position': 0};
+                trains[i].isActive = true;
+                for(train_num in trains){
+                    setTrainPosition(train_num,0)
+                }
             }
         };
         out("line = "+ line);
@@ -266,10 +269,8 @@ graph.on('remove', function(cell, collection, opt) {
         // If line had a train animation, turn it off
         var line_num = colorArr.indexOf(cell.attributes.attrs['.connection'].stroke)
         if(trains[line_num] != null){
-            clearInterval(trains[line_num].process)
-            trains[line_num] = null
-            var train_el = document.getElementById('train-'+line_num);    
-            train_el.style.bottom = 0 + 'px';
+            trains[line_num].isActive = false;
+            setTrainPosition(line_num, 0);
         }
     }
 })
@@ -325,13 +326,12 @@ var ctx = vis.getContext('2d'),
     w, h;
 
 vis.width = w = window.innerWidth * 0.3;
-vis.height = h = 50*6;
+vis.height = h = 75*6;
 
 var waveforms = []
 var visualizations = []
 var points = []
-var horizon = h * 0.5;
-    count = 100,
+var count = 100,
     step = Math.ceil(w / count);
 var buffer = new ArrayBuffer(count * 4)
     //points = new Array(count);
@@ -339,7 +339,7 @@ var buffer = new ArrayBuffer(count * 4)
 for(var i = 0; i < 6; i++){
     waveforms.push(new Tone.Waveform());
     visualizations.push(new osc());
-    visualizations[i].max = h/6*0.7;
+    visualizations[i].max = h/6*0.4;
     visualizations[i].line = i;
     visualizations[i].offset = i*h/6 + h/2/6;
     points[i] = new Float32Array(new ArrayBuffer(count * 4));
@@ -421,13 +421,26 @@ function osc() {
     return this;    
 }
 
-trains = [null, null, null, null, null, null];
+trains = [];
+for(var i = 0; i < 6; i++){
+    trains.push({
+        'isActive': false,
+        'position': 0
+    })
+}
+// To be used with setInterval as an animation for the train images
 function moveTrain(){
     for(train_num in trains){
-        if(trains[train_num] != null){
-            var train_el = document.getElementById('train-'+train_num);    
-            train_el.style.bottom = trains[train_num].position + 'px';
-            trains[train_num].position = 10 - trains[train_num].position;
+        if(trains[train_num].isActive){
+            setTrainPosition(train_num, 5 - trains[train_num].position)
         }
     }
+}
+setInterval(moveTrain, 500)
+
+// Moves train image to desired offset
+function setTrainPosition(train_num, position){
+    var train_el = document.getElementById('train-'+train_num);    
+    train_el.style.bottom = position + 'px';
+    trains[train_num].position = position;
 }
