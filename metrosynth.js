@@ -202,11 +202,23 @@ graph.on('change:target', function(link) {
             }
             // get next link(s)
             outboundLinks = graph.getConnectedLinks(myElement, { outbound: true });
+
+            // Check if oscillator and output are both part of chain
+            if(line.length >= 2 && i >= 0 && idDict[line[line.length-1]] instanceof Tone.Panner){
+                idDict[line[line.length-2]].connect(waveforms[i])
+                console.log(waveforms[i].getValue())
+            }
         };
         out("line = "+ line);
     };
 
     // out(m);
+
+    /*for output in outArr{
+        if(output.numberOfInputs > 0){
+
+        }
+    }*/
 });
 
 // todo: also remove things in line when links are dragged away
@@ -284,4 +296,117 @@ function lineToString(line, idDict){
         string = string + " ";
     };
     return string;
+}
+
+
+
+
+
+// Visualization Component begins
+// Should eventually be moved to another file
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *    Wave oscillators by Ken Fyrstenberg Nilsen
+ *    http://abdiassoftware.com/
+ *
+ *    CC-Attribute 3.0 License
+*/
+var ctx = vis.getContext('2d'),
+    w, h;
+
+vis.width = w = window.innerWidth * 0.4;
+vis.height = h = 50*6;
+
+var waveforms = []
+var visualizations = []
+var points = []
+var horizon = h * 0.5;
+    count = 100,
+    step = Math.ceil(w / count);
+var buffer = new ArrayBuffer(count * 4)
+    //points = new Array(count);
+
+for(var i = 0; i < 6; i++){
+    waveforms.push(new Tone.Waveform());
+    visualizations.push(new osc());
+    visualizations[i].max = h/6*0.7;
+    visualizations[i].line = i;
+    visualizations[i].offset = i*h/6 + h/2/6;
+    points[i] = new Float32Array(new ArrayBuffer(count * 4));
+    for(var j = 0; j < count; j++) {
+        points[i][j] = visualizations[i].offset;
+    }
+}
+
+ctx.lineWidth = 5;
+ctx.strokeStyle = '#000';
+ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+
+function loop() {
+    var i, j;
+    
+    /// move points to the left
+    for(i = 0; i < 6; i++){
+        for(j = 0; j < count - 1; j++) {
+            points[i][j] = points[i][j + 1];
+        }    
+        /// get a new point
+        points[i][count - 1] = visualizations[i].getAmp();
+        
+    }
+
+    ctx.fillRect(0, 0, w, h);
+    for(i = 0; i < 6; i++){
+        ctx.strokeStyle = colorArr[i]
+        //ctx.clearRect(0, 0, w, h);
+        
+        
+        /// render wave
+        ctx.beginPath();
+        ctx.moveTo(0, points[i][0]);
+        
+        for(j = 1; j < count; j++) {
+            ctx.lineTo(j * step, points[i][j]);
+        }
+        
+        ctx.stroke();
+    }
+
+    requestAnimationFrame(loop);
+}
+loop();
+
+/// oscillator object
+function osc() {
+
+    var t = 0
+    
+    this.variation = 0.4;
+    this.max = 50;
+    this.speed = 0.02;
+    this.line = 0;
+    this.offset = 0;
+    
+    var me = this,
+        t;
+
+    this.getAmp = function() {
+        
+        t %= 2048
+        var this_val = waveforms[this.line].getValue()[Math.floor(t/2)];
+        var next_val = waveforms[this.line].getValue()[Math.floor(t/2 + 1) % 1024]
+        var amp = 0;
+
+        if(t % 2 == 0){
+            amp = this_val;
+        }
+        else{
+            amp = (this_val + next_val) / 2;
+        }
+        t++;
+
+        return this.max*amp + this.offset;
+    }
+
+    return this;    
 }
