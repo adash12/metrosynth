@@ -415,7 +415,8 @@ function osc() {
         }
         t++;
 
-        return this.max*amp + this.offset;
+        return this.max * waveforms[this.line].getValue()[0] + this.offset;
+        //return this.max*amp + this.offset;
     }
 
     return this;    
