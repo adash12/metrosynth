@@ -1,3 +1,9 @@
+body {
+  font-family: helvetica, arial, sans-serif;
+  font-size: .8em;
+  font-weight: bold;
+}
+
 #canvas {
   width: 1020px;
   height: 920px;
@@ -8,10 +14,23 @@
   float: left;
 }
 
+#refresh {
+	font-family: helvetica, arial, sans-serif;
+	font-weight: bold;
+	background: #000000;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
 #instructions {
-	color: rgb(204,204,204);
+	color: #000000;
 	margin: 20px;
-	font-size: 10pt;
+	font-size: 1em;
 }
 
 #vis{
@@ -29,12 +48,6 @@
 .train-sprite{
 	margin-top : 27px;
 	position: relative;
-}
-
-body {
-  font-family: helvetica, sans-serif;
-  font-size: .8em;
-  font-weight: bold;
 }
 
 #right {

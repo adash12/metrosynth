@@ -1,3 +1,7 @@
+$("#refresh").on("click", function() {
+    location.reload();
+});
+
 // joint.js setup
 var canvas = $('#canvas');
 var cells = [];
