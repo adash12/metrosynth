@@ -58,6 +58,31 @@ body {
 	width: 200px;
 }
 
+
+#authors {
+	font-family: helvetica, arial, sans-serif;
+  font-size: .8em;
+  font-weight: bold;
+  color:#606060;
+}
+a:link {
+    color:#606060;
+    text-decoration: none;
+}
+a:visited {
+    color:#303030;
+    text-decoration: none;
+}
+a:hover {
+    color:#606060;
+    text-decoration: underline;
+}
+a:active {
+    color:#303030;
+    text-decoration: underline;
+}
+
+
 .inPorts {
 	stroke-width: 3px;
 	/*transform: translate(10px,10px);*/
